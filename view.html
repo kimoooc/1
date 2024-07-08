@@ -40,6 +40,7 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
+            position: relative;
         }
 
         .book-info-container h1 {
@@ -85,6 +86,14 @@
             margin-top: 0;
         }
 
+        .quotes-container {
+            margin-top: 20px;
+        }
+
+        .quotes-container h2 {
+            margin-bottom: 10px;
+        }
+
         .quote {
             font-style: italic;
             background-color: #f9f9f9;
@@ -112,6 +121,9 @@
             justify-content: center;
             gap: 5px;
             margin-top: 10px;
+            position: absolute;
+            right: 0;
+            top: 20px;
         }
 
         .star-rating span {
@@ -147,6 +159,15 @@
                 flex-direction: column;
                 align-items: flex-start;
             }
+
+            .vertical-separator {
+                display: none;
+            }
+
+            .star-rating {
+                position: relative;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -161,6 +182,7 @@
         <div class="book-info-container">
             <h1 id="book-title"></h1>
             <p><strong id="book-author"></strong></p>
+            <span class="stars" id="book-rating"></span>
             <div class="details">
                 <span><strong>عدد الصفحات:</strong> <span id="book-pages"></span></span>
                 <span class="vertical-separator"></span>
@@ -168,8 +190,10 @@
                 <span class="vertical-separator"></span>
                 <span><strong>تاريخ الإصدار:</strong> <span id="book-releaseDate"></span></span>
             </div>
-            <div id="book-quotes"></div>
-            <span class="stars" id="book-rating"></span>
+            <div class="quotes-container">
+                <h2>اقتباسات من الرواية:</h2>
+                <div id="book-quotes"></div>
+            </div>
             <div class="star-rating" id="star-rating">
                 <span data-value="5">★</span>
                 <span data-value="4">★</span>
@@ -253,7 +277,6 @@
                         };
 
                         document.getElementById('book-cover').src = book.cover;
-                        document.getElementById('book-cover').alt = book.title;
                         document.getElementById('book-title').textContent = book.title;
                         document.getElementById('book-author').textContent = book.author;
                         document.getElementById('book-pages').textContent = book.pages;
