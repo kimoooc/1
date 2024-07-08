@@ -18,26 +18,38 @@
             background-color: white;
             padding: 20px;
             border-radius: 8px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
         }
 
-        .tg {
-            border-collapse: collapse;
+        .cover-container {
+            flex: 1 1 25%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .cover-container img {
             width: 100%;
-        }
-
-        .tg th, .tg td {
-            border: 1px solid #ddd;
-            padding: 8px;
-        }
-
-        .tg th {
-            background-color: #f2f2f2;
-            text-align: center;
-        }
-
-        .tg img {
-            width: 100px;
             border-radius: 8px;
+        }
+
+        .book-info-container {
+            flex: 1 1 70%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .book-info-container h1 {
+            font-size: 50px;
+            margin: 0;
+        }
+
+        .book-info-container p {
+            font-size: 25px;
+            margin: 0;
         }
 
         .star-rating {
@@ -47,6 +59,7 @@
             display: flex;
             justify-content: center;
             gap: 5px;
+            margin-top: 10px;
         }
 
         .star-rating span {
@@ -86,18 +99,18 @@
         }
 
         @media screen and (max-width: 600px) {
-            .tg th, .tg td {
-                display: block;
-                width: 100%;
+            .cover-container {
+                flex: 1 1 80%;
             }
 
-            .tg img {
-                display: block;
-                margin: 0 auto;
+            .book-info-container h1 {
+                font-size: 25px;
+                text-align: center;
             }
 
-            .tg {
-                border: none;
+            .book-info-container p {
+                font-size: 14px;
+                text-align: center;
             }
         }
     </style>
@@ -107,43 +120,26 @@
         <img src="https://i.imgur.com/llF5iyg.gif" alt="جاري التحميل...">
     </div>
     <div class="container" id="book-details" style="display: none;">
-        <table class="tg">
-            <thead>
-                <tr>
-                    <th class="tg-0lax" rowspan="4"><img id="book-cover" src="" alt="غلاف الكتاب"/></th>
-                    <th class="tg-0lax" colspan="6"><h1 id="book-title"></h1></th>
-                </tr>
-                <tr>
-                    <th class="tg-0lax" colspan="6"><p><strong id="book-author"></strong></p></th>
-                </tr>
-                <tr>
-                    <th class="tg-0lax">عدد الصفحات:</th>
-                    <th class="tg-0lax" id="book-pages"></th>
-                    <th class="tg-0lax">النوع:</th>
-                    <th class="tg-0lax" id="book-genre"></th>
-                    <th class="tg-0lax">تاريخ الإصدار</th>
-                    <th class="tg-0lax" id="book-releaseDate"></th>
-                </tr>
-                <tr>
-                    <th class="tg-0lax" colspan="6"><span class="stars" id="book-rating"></span></th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="tg-0lax">
-                        <div class="star-rating" id="star-rating">
-                            <span data-value="5">★</span>
-                            <span data-value="4">★</span>
-                            <span data-value="3">★</span>
-                            <span data-value="2">★</span>
-                            <span data-value="1">★</span>
-                        </div>
-                        <p class="rate-text">قيم الرواية</p>
-                    </td>
-                    <td class="tg-0lax" colspan="6" id="book-quotes"></td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="cover-container">
+            <img id="book-cover" src="" alt="غلاف الكتاب"/>
+            <div class="star-rating" id="star-rating">
+                <span data-value="5">★</span>
+                <span data-value="4">★</span>
+                <span data-value="3">★</span>
+                <span data-value="2">★</span>
+                <span data-value="1">★</span>
+            </div>
+            <p class="rate-text">قيم الرواية</p>
+        </div>
+        <div class="book-info-container">
+            <h1 id="book-title"></h1>
+            <p><strong id="book-author"></strong></p>
+            <p><strong>عدد الصفحات:</strong> <span id="book-pages"></span></p>
+            <p><strong>النوع:</strong> <span id="book-genre"></span></p>
+            <p><strong>تاريخ الإصدار:</strong> <span id="book-releaseDate"></span></p>
+            <span class="stars" id="book-rating"></span>
+            <p id="book-quotes"></p>
+        </div>
     </div>
     <div class="summary">
         <h2>الملخص:</h2>
@@ -233,7 +229,7 @@
 
                     // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
                     document.getElementById('loading-spinner').style.display = 'none';
-                    document.getElementById('book-details').style.display = 'block';
+                    document.getElementById('book-details').style.display = 'flex';
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
