@@ -39,7 +39,7 @@
             flex: 1 1 70%;
             display: flex;
             flex-direction: column;
-            justify-content: center;
+            justify-content: flex-start;
         }
 
         .book-info-container h1 {
@@ -52,9 +52,25 @@
             margin: 0;
         }
 
+        .book-info-container .details {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .book-info-container .details span {
+            margin: 0 10px;
+        }
+
+        .vertical-separator {
+            border-left: 1px solid #ccc;
+            height: 20px;
+        }
+
         .star-rating {
             direction: ltr;
-            font-size: 24px;
+            font-size: 30px;
             cursor: pointer;
             display: flex;
             justify-content: center;
@@ -87,6 +103,14 @@
             margin-top: 0;
         }
 
+        .quote {
+            font-style: italic;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-left: 4px solid #ccc;
+            margin: 10px 0;
+        }
+
         .loading-spinner {
             display: flex;
             justify-content: center;
@@ -112,6 +136,11 @@
                 font-size: 14px;
                 text-align: center;
             }
+
+            .book-info-container .details {
+                flex-direction: column;
+                align-items: flex-start;
+            }
         }
     </style>
 </head>
@@ -134,11 +163,15 @@
         <div class="book-info-container">
             <h1 id="book-title"></h1>
             <p><strong id="book-author"></strong></p>
-            <p><strong>عدد الصفحات:</strong> <span id="book-pages"></span></p>
-            <p><strong>النوع:</strong> <span id="book-genre"></span></p>
-            <p><strong>تاريخ الإصدار:</strong> <span id="book-releaseDate"></span></p>
+            <div class="details">
+                <span><strong>عدد الصفحات:</strong> <span id="book-pages"></span></span>
+                <span class="vertical-separator"></span>
+                <span><strong>النوع:</strong> <span id="book-genre"></span></span>
+                <span class="vertical-separator"></span>
+                <span><strong>تاريخ الإصدار:</strong> <span id="book-releaseDate"></span></span>
+            </div>
             <span class="stars" id="book-rating"></span>
-            <p id="book-quotes"></p>
+            <div id="book-quotes" class="quote"></div>
         </div>
     </div>
     <div class="summary">
@@ -221,15 +254,16 @@
                         document.getElementById('book-genre').textContent = book.genre;
                         document.getElementById('book-releaseDate').textContent = book.releaseDate;
                         document.getElementById('book-rating').innerHTML = convertRatingToStars(book.rating);
-                        document.getElementById('book-quotes').textContent = book.quotes;
+                        document.getElementById('book-quotes').innerHTML = book.quotes;
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
-                        setupStarRating();
                     }
 
                     // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
                     document.getElementById('loading-spinner').style.display = 'none';
                     document.getElementById('book-details').style.display = 'flex';
+
+                    setupStarRating();
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
