@@ -68,9 +68,45 @@
             height: 20px;
         }
 
+        .stars {
+            font-size: 30px;
+            color: #FFD700;
+            margin-top: 10px;
+        }
+
+        .summary, .review {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .summary h2, .review h2 {
+            margin-top: 0;
+        }
+
+        .quote {
+            font-style: italic;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-right: 4px solid #ccc;
+            margin: 10px 0;
+        }
+
+        .loading-spinner {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .loading-spinner img {
+            width: 100px;
+        }
+
         .star-rating {
             direction: ltr;
-            font-size: 30px;
+            font-size: 50px;
             cursor: pointer;
             display: flex;
             justify-content: center;
@@ -90,36 +126,6 @@
         .rate-text {
             text-align: center;
             margin-top: 10px;
-        }
-
-        .summary, .review {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .summary h2, .review h2 {
-            margin-top: 0;
-        }
-
-        .quote {
-            font-style: italic;
-            background-color: #f9f9f9;
-            padding: 10px;
-            border-left: 4px solid #ccc;
-            margin: 10px 0;
-        }
-
-        .loading-spinner {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-
-        .loading-spinner img {
-            width: 100px;
         }
 
         @media screen and (max-width: 600px) {
@@ -151,7 +157,7 @@
     <div class="container" id="book-details" style="display: none;">
         <div class="cover-container">
             <img id="book-cover" src="" alt="غلاف الكتاب"/>
-           
+        </div>
         <div class="book-info-container">
             <h1 id="book-title"></h1>
             <p><strong id="book-author"></strong></p>
@@ -162,9 +168,9 @@
                 <span class="vertical-separator"></span>
                 <span><strong>تاريخ الإصدار:</strong> <span id="book-releaseDate"></span></span>
             </div>
+            <div id="book-quotes"></div>
             <span class="stars" id="book-rating"></span>
-            <div id="book-quotes" class="quote"></div>
-             <div style=" font-size: 50px;" class="star-rating" id="star-rating">
+            <div class="star-rating" id="star-rating">
                 <span data-value="5">★</span>
                 <span data-value="4">★</span>
                 <span data-value="3">★</span>
@@ -172,7 +178,6 @@
                 <span data-value="1">★</span>
             </div>
             <p class="rate-text">قيم الرواية</p>
-        </div>
         </div>
     </div>
     <div class="summary">
@@ -255,7 +260,10 @@
                         document.getElementById('book-genre').textContent = book.genre;
                         document.getElementById('book-releaseDate').textContent = book.releaseDate;
                         document.getElementById('book-rating').innerHTML = convertRatingToStars(book.rating);
-                        document.getElementById('book-quotes').innerHTML = book.quotes;
+                        
+                        const quotes = book.quotes.split('"').filter(quote => quote.trim() !== '');
+                        document.getElementById('book-quotes').innerHTML = quotes.map(quote => `<div class="quote">"${quote}"</div>`).join('');
+
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
                     }
