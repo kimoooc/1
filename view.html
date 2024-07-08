@@ -72,7 +72,6 @@
             font-size: 30px;
             color: #FFD700;
             margin-top: 10px;
-            text-align: center;
         }
 
         .summary, .review {
@@ -155,18 +154,16 @@
         }
 
         @media screen and (min-width: 601px) {
+            .container {
+                flex-direction: row-reverse;
+            }
+
             .book-info-container {
                 align-items: flex-start;
             }
 
             .star-rating {
-                align-self: flex-end;
-                justify-content: flex-end;
-                text-align: right;
-            }
-
-            .book-info-container .stars {
-                text-align: left;
+                align-self: flex-start;
             }
         }
     </style>
@@ -183,7 +180,11 @@
             <h1 id="book-title"></h1>
             <p><strong id="book-author"></strong></p>
             <div class="details">
-                <span><strong>عدد الصفحات, النوع, تاريخ الإصدار:</strong> <span id="book-details-line"></span></span>
+                <span><strong>عدد الصفحات:</strong> <span id="book-pages"></span></span>
+                <span><strong class="vertical-separator"></strong></span>
+                <span><strong>النوع:</strong> <span id="book-genre"></span></span>
+                <span><strong class="vertical-separator"></strong></span>
+                <span><strong>تاريخ الإصدار:</strong> <span id="book-releaseDate"></span></span>
             </div>
             <div class="quotes">
                 <h2>اقتباسات من الرواية:</h2>
@@ -247,7 +248,7 @@
             const params = new URLSearchParams(window.location.search);
             const bookTitle = params.get('title');
 
-            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
+            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=YOUR_API_KEY';
 
             fetch(url)
                 .then(response => response.json())
@@ -257,38 +258,42 @@
 
                     if (bookData) {
                         const book = {
-                            cover: bookData[headers.indexOf("صورة_الغلاف")],
+                            date: bookData[headers.indexOf("تاريخ المراجعة")],
                             title: bookData[headers.indexOf("عنوان_الكتاب")],
+                            cover: bookData[headers.indexOf("صورةالغلاف")],
                             author: bookData[headers.indexOf("اسم_الكاتب")],
                             pages: bookData[headers.indexOf("عدد_الصفحات")],
                             genre: bookData[headers.indexOf("النوع")],
-                            releaseDate: bookData[headers.indexOf("تاريخ_الإصدار")],
-                            rating: parseFloat(bookData[headers.indexOf("التقييم")]),
-                            readerRating: parseInt(bookData[headers.indexOf("تقييم_القراء")]),
-                            quotes: bookData[headers.indexOf("مقتطفات")],
-                            summary: bookData[headers.indexOf("ملخص")],
-                            review: bookData[headers.indexOf("مراجعة")],
+                            releaseDate: bookData[headers.indexOf("تاريخ_الاصدار")],
+                            rating: Number(bookData[headers.indexOf("التقييم_الشخصي")]),
+                            readerRating: Number(bookData[headers.indexOf("تقييم_القراء")]),
+                            quotes: bookData[headers.indexOf("اقتباس_من_الرواية")],
+                            summary: bookData[headers.indexOf("ملخص_الكتاب")],
+                            review: bookData[headers.indexOf("المراجعة")],
                         };
 
                         document.getElementById('book-cover').src = book.cover;
                         document.getElementById('book-title').textContent = book.title;
                         document.getElementById('book-author').textContent = book.author;
-                        document.getElementById('book-details-line').textContent = `${book.pages}, ${book.genre}, ${book.releaseDate}`;
-                        document.getElementById('book-quotes').innerHTML = book.quotes.split('"').filter(quote => quote.trim() !== '').map(quote => `<div class="quote">"${quote}"</div>`).join('');
+                        document.getElementById('book-pages').textContent = book.pages;
+                        document.getElementById('book-genre').textContent = book.genre;
+                        document.getElementById('book-releaseDate').textContent = book.releaseDate;
+                        document.getElementById('star-rating').innerHTML = convertRatingToStars(book.rating);
+                        document.getElementById('book-quotes').innerHTML = `<div class="quote">${book.quotes.split('"').filter(quote => quote.trim() !== '').map(quote => `"${quote}"`).join('</div><div class="quote">')}</div>`;
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
-                        document.getElementById('loading-spinner').style.display = 'none';
-                        document.getElementById('book-details').style.display = 'flex';
 
                         setupStarRating();
-                    } else {
-                        console.error('لم يتم العثور على بيانات الكتاب');
                     }
+
+                    // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
+                    document.getElementById('loading-spinner').style.display = 'none';
+                    document.getElementById('book-details').style.display = 'flex';
                 })
-                .catch(error => console.error('حدث خطأ أثناء جلب البيانات:', error));
+                .catch(error => console.error('Error fetching data:', error));
         }
 
-        // تحميل تفاصيل الكتاب عند تحميل الصفحة
+        // جلب تفاصيل الكتاب عند تحميل الصفحة
         window.onload = fetchBookDetails;
     </script>
 </body>
