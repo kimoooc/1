@@ -91,7 +91,7 @@
         }
 
         .stars {
-            font-size: 24px;
+            font-size: 50px;
             color: #FFD700;
             text-align: center;
         }
@@ -292,7 +292,7 @@
                         document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
                         document.getElementById('book-info').innerHTML = `
                             <h1>${book.title}</h1>
-                            <p><strong>الكاتب:</strong> ${book.author}</p>
+                            <p><strong></strong> ${book.author}</p>
                             <p><strong></strong> ${convertRatingToStars(book.rating)}</p>
                             <div class="details-row">
                                 <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
