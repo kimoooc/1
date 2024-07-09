@@ -48,20 +48,38 @@
         .book-info table {
             width: 100%;
             border-collapse: collapse;
+            margin-top: 20px;
         }
 
         .book-info table td {
             padding: 5px;
+            vertical-align: top;
         }
 
         .book-info table td:first-child {
             font-weight: bold;
         }
 
-        .book-info table td:last-child {
+        .book-info table td:nth-child(2) {
             background-color: #ff0;
             padding: 5px;
             border-radius: 5px;
+        }
+
+        .book-info .details-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .details-row div {
+            flex: 1;
+            padding: 5px;
+            text-align: center;
+            border-radius: 5px;
+        }
+
+        .details-row div:not(:last-child) {
+            margin-left: 10px;
         }
 
         .summary, .review, .rating {
@@ -122,6 +140,14 @@
 
             .book-info h1 {
                 text-align: center;
+            }
+
+            .details-row {
+                flex-direction: column;
+            }
+
+            .details-row div {
+                margin: 5px 0;
             }
         }
 
@@ -223,16 +249,13 @@
                                     <td>${book.author}</td>
                                 </tr>
                                 <tr>
-                                    <td>عدد الصفحات:</td>
-                                    <td>${book.pages}</td>
-                                </tr>
-                                <tr>
-                                    <td>النوع:</td>
-                                    <td>${book.genre}</td>
-                                </tr>
-                                <tr>
-                                    <td>تاريخ الإصدار:</td>
-                                    <td>${book.releaseDate}</td>
+                                    <td colspan="2">
+                                        <div class="details-row">
+                                            <div>عدد الصفحات: ${book.pages}</div>
+                                            <div>النوع: ${book.genre}</div>
+                                            <div>تاريخ الإصدار: ${book.releaseDate}</div>
+                                        </div>
+                                    </td>
                                 </tr>
                                 <tr>
                                     <td>التقييم:</td>
