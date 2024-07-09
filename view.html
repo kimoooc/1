@@ -214,7 +214,11 @@
         <h2>مراجعة الكتاب:</h2>
         <p id="book-review"></p>
     </div>
-   
+    <div class="rating">
+        <h2>إرسال تقييم الزوار للرواية من خلال اختيارهم لعدد من النجوم حسب تقييمهم من خلال تمرير الفارة والضغط:</h2>
+        <div id="user-rating" class="rating-stars"></div>
+        <button onclick="submitRating()">إرسال التقييم</button>
+    </div>
     <script>
         // تحويل التقييم إلى نجوم
         function convertRatingToStars(rating) {
@@ -292,43 +296,49 @@
                             summary: bookData[headers.indexOf("الملخص")],
                             review: bookData[headers.indexOf("مراجعتي")],
                             quotes: bookData[headers.indexOf("مقتطفات")],
-};
+                        };
 
-                    document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
-                    document.getElementById('book-info').innerHTML = `
-                        <h1>${book.title}</h1>
-                        <p><strong>الكاتب:</strong> ${book.author}</p>
-                        <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
-                        <div class="details-row">
-                            <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
-                            <div><strong>النوع:</strong> ${book.genre}</div>
-                            <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
-                        </div>
-                        <div class="quotes">
-                            <h2>مقتطفات:</h2>
-                            <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
-                        </div>
-                        <div class="rating">
-                            <h2>إرسال تقييم الزوار للرواية من خلال اختيارهم لعدد من النجوم حسب تقييمهم من خلال تمرير الفارة والضغط:</h2>
-                            <div id="user-rating" class="rating-stars"></div>
-                        </div>
-                    `;
-                    document.getElementById('book-summary').textContent = book.summary;
-                    document.getElementById('book-review').textContent = book.review;
-                }
+                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
+                        document.getElementById('book-info').innerHTML = `
+                            <h1>${book.title}</h1>
+                            <p><strong>الكاتب:</strong> ${book.author}</p>
+                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
+                            <div class="details-row">
+                                <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
+                                <div><strong>النوع:</strong> ${book.genre}</div>
+                                <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
+                            </div>
+                            <div class="quotes">
+                                <h2>مقتطفات:</h2>
+                                <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
+                            </div>
+                        `;
+                        document.getElementById('book-summary').textContent = book.summary;
+                        document.getElementById('book-review').textContent = book.review;
+                    }
 
-                // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
-                document.getElementById('loading-spinner').style.display = 'none';
-                document.getElementById('book-details').style.display = 'flex';
-            })
-            .catch(error => console.error('Error fetching data:', error));
-    }
+                    // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
+                    document.getElementById('loading-spinner').style.display = 'none';
+                    document.getElementById('book-details').style.display = 'flex';
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
 
-    // جلب تفاصيل الكتاب وإنشاء نجوم التقييم عند تحميل الصفحة
-    window.onload = () => {
-        fetchBookDetails();
-        createRatingStars();
-    };
-</script>
+        function submitRating() {
+            const rating = document.querySelector('.rating-stars').dataset.rating;
+            if (rating) {
+                alert(`تقييمك: ${rating} نجوم`);
+                // إرسال التقييم إلى الخادم أو تخزينه في مكان مناسب
+            } else {
+                alert('يرجى تحديد التقييم قبل الإرسال.');
+            }
+        }
+
+        // جلب تفاصيل الكتاب وإنشاء نجوم التقييم عند تحميل الصفحة
+        window.onload = () => {
+            fetchBookDetails();
+            createRatingStars();
+        };
+    </script>
 </body>
 </html>
