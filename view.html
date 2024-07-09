@@ -181,6 +181,12 @@
         </div>
         <div class="book-info" id="book-info">
             <!-- سيتم إضافة معلومات الكتاب هنا بواسطة JavaScript -->
+            <div class="stars" id="book-rating">
+            <!-- سيتم إضافة تقييم الزوار هنا بواسطة JavaScript -->
+        </div>
+        <div class="rating-stars" id="user-rating">
+            <!-- نجوم التقييم القابلة للتحديد ستتم إضافتها هنا بواسطة JavaScript -->
+        </div>
         </div>
     </div>
     <div class="summary">
@@ -287,7 +293,7 @@
                         document.getElementById('book-info').innerHTML = `
                             <h1>${book.title}</h1>
                             <p><strong>الكاتب:</strong> ${book.author}</p>
-                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
+                            <p><strong></strong> ${convertRatingToStars(book.rating)}</p>
                             <div class="details-row">
                                 <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
                                 <div><strong>النوع:</strong> ${book.genre}</div>
