@@ -151,6 +151,10 @@
             .vertical-separator {
                 display: none;
             }
+
+            .star-rating {
+                justify-content: flex-start;
+            }
         }
 
         @media screen and (min-width: 601px) {
@@ -158,12 +162,17 @@
                 flex-direction: row-reverse;
             }
 
+            .cover-container {
+                order: 2;
+            }
+
             .book-info-container {
+                order: 1;
                 align-items: flex-start;
             }
 
             .star-rating {
-                align-self: flex-start;
+                align-self: center;
             }
         }
     </style>
@@ -181,11 +190,12 @@
             <p><strong id="book-author"></strong></p>
             <div class="details">
                 <span><strong>عدد الصفحات:</strong> <span id="book-pages"></span></span>
-                <span><strong class="vertical-separator"></strong></span>
+                <span class="vertical-separator"></span>
                 <span><strong>النوع:</strong> <span id="book-genre"></span></span>
-                <span><strong class="vertical-separator"></strong></span>
+                <span class="vertical-separator"></span>
                 <span><strong>تاريخ الإصدار:</strong> <span id="book-releaseDate"></span></span>
             </div>
+            <span class="stars" id="book-rating"></span>
             <div class="quotes">
                 <h2>اقتباسات من الرواية:</h2>
                 <div id="book-quotes"></div>
@@ -260,16 +270,16 @@
                         const book = {
                             date: bookData[headers.indexOf("تاريخ المراجعة")],
                             title: bookData[headers.indexOf("عنوان_الكتاب")],
-                            cover: bookData[headers.indexOf("صورةالغلاف")],
                             author: bookData[headers.indexOf("اسم_الكاتب")],
-                            pages: bookData[headers.indexOf("عدد_الصفحات")],
+                            cover: bookData[headers.indexOf("غلاف_الكتاب")],
+                            pages: bookData[headers.indexOf("عدد الصفحات")],
                             genre: bookData[headers.indexOf("النوع")],
-                            releaseDate: bookData[headers.indexOf("تاريخ_الاصدار")],
-                            rating: Number(bookData[headers.indexOf("التقييم_الشخصي")]),
-                            readerRating: Number(bookData[headers.indexOf("تقييم_القراء")]),
-                            quotes: bookData[headers.indexOf("اقتباس_من_الرواية")],
-                            summary: bookData[headers.indexOf("ملخص_الكتاب")],
-                            review: bookData[headers.indexOf("المراجعة")],
+                            releaseDate: bookData[headers.indexOf("تاريخ الإصدار")],
+                            rating: parseFloat(bookData[headers.indexOf("التقييم")]),
+                            quotes: bookData.slice(headers.indexOf("اقتباسات")),
+                            summary: bookData[headers.indexOf("الملخص")],
+                            review: bookData[headers.indexOf("مراجعتي")],
+                            readerRating: parseFloat(bookData[headers.indexOf("تقييم القراء")]),
                         };
 
                         document.getElementById('book-cover').src = book.cover;
@@ -278,17 +288,21 @@
                         document.getElementById('book-pages').textContent = book.pages;
                         document.getElementById('book-genre').textContent = book.genre;
                         document.getElementById('book-releaseDate').textContent = book.releaseDate;
-                        document.getElementById('star-rating').innerHTML = convertRatingToStars(book.rating);
-                        document.getElementById('book-quotes').innerHTML = `<div class="quote">${book.quotes.split('"').filter(quote => quote.trim() !== '').map(quote => `"${quote}"`).join('</div><div class="quote">')}</div>`;
+                        document.getElementById('book-rating').innerHTML = convertRatingToStars(book.rating);
+
+                        const quotes = book.quotes.filter(quote => quote.trim() !== '');
+                        document.getElementById('book-quotes').innerHTML = quotes.map(quote => `<div class="quote">"${quote}"</div>`).join('');
+
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
-
-                        setupStarRating();
+                        document.getElementById('reader-rating').innerHTML = convertRatingToStars(book.readerRating);
                     }
 
                     // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
                     document.getElementById('loading-spinner').style.display = 'none';
                     document.getElementById('book-details').style.display = 'flex';
+
+                    setupStarRating();
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
