@@ -181,8 +181,17 @@
         </div>
         <div class="book-info" id="book-info">
             <!-- سيتم إضافة معلومات الكتاب هنا بواسطة JavaScript -->
-            
-              <div class="rating">
+        </div>
+    </div>
+    <div class="summary">
+        <h2>الملخص:</h2>
+        <p id="book-summary"></p>
+    </div>
+    <div class="review">
+        <h2>مراجعة الكتاب:</h2>
+        <p id="book-review"></p>
+    </div>
+    <div class="rating">
         <h2>تقييم الزوار</h2>
         <div class="stars" id="book-rating">
             <!-- سيتم إضافة تقييم الزوار هنا بواسطة JavaScript -->
@@ -194,18 +203,6 @@
         <textarea placeholder="أضف تعليقك هنا" id="user-comment"></textarea>
         <button onclick="submitRating()">إرسال</button>
     </div>
-            
-        </div>
-    </div>
-    <div class="summary">
-        <h2>الملخص:</h2>
-        <p id="book-summary"></p>
-    </div>
-    <div class="review">
-        <h2>مراجعة الكتاب:</h2>
-        <p id="book-review"></p>
-    </div>
-  
     <script>
         // تحويل التقييم إلى نجوم
         function convertRatingToStars(rating) {
@@ -286,18 +283,18 @@
                             visitorRating: parseFloat(bookData[headers.indexOf("تقييم_الزوار")])
                         };
 
-                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
-                        document.getElementById('book-info').innerHTML = `
+                        document.getElementById('book-cover').innerHTML = <img src="${book.cover}" alt="${book.title}"/>;
+                        document.getElementById('book-info').innerHTML = 
                             <h1>${book.title}</h1>
                             <p><strong>الكاتب:</strong> ${book.author}</p>
-                            <p><strong></strong> ${convertRatingToStars(book.rating)}</p>
+                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
                             <div class="details-row">
                                 <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
                                 <div><strong>النوع:</strong> ${book.genre}</div>
                                 <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
                             </div>
                             <p><strong>مقتطفات:</strong> ${book.quotes}</p>
-                        `;
+                        ;
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
                         document.getElementById('book-rating').innerHTML = convertRatingToStars(book.visitorRating);
@@ -316,7 +313,7 @@
             const comment = document.querySelector('textarea').value;
 
             if (comment) {
-                alert(`شكراً لتقييمك!\n\nالتقييم: ${stars} نجوم\nالتعليق: ${comment}`);
+                alert(شكراً لتقييمك!\n\nالتقييم: ${stars} نجوم\nالتعليق: ${comment});
             } else {
                 alert('يرجى إضافة تعليق قبل الإرسال.');
             }
