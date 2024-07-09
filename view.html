@@ -67,16 +67,14 @@
             display: flex;
             justify-content: space-between;
             text-align: right;
+            flex-wrap: wrap;
         }
 
         .details-row div {
             flex: 1;
             padding: 5px;
             border-radius: 5px;
-        }
-
-        .details-row div:not(:last-child) {
-            margin-left: 10px;
+            box-sizing: border-box;
         }
 
         .summary, .review, .rating {
@@ -91,7 +89,7 @@
         }
 
         .stars {
-            font-size: 50px;
+            font-size: 24px;
             color: #FFD700;
             text-align: center;
         }
@@ -103,7 +101,7 @@
         }
 
         .rating-stars span {
-            font-size: 120px;
+            font-size: 24px;
             cursor: pointer;
         }
 
@@ -181,12 +179,9 @@
         </div>
         <div class="book-info" id="book-info">
             <!-- سيتم إضافة معلومات الكتاب هنا بواسطة JavaScript -->
-            <div class="stars" id="book-rating">
-            <!-- سيتم إضافة تقييم الزوار هنا بواسطة JavaScript -->
-        </div>
-        <div class="rating-stars" id="user-rating">
-            <!-- نجوم التقييم القابلة للتحديد ستتم إضافتها هنا بواسطة JavaScript -->
-        </div>
+            <div class="rating-stars" id="user-rating">
+                <!-- نجوم التقييم القابلة للتحديد ستتم إضافتها هنا بواسطة JavaScript -->
+            </div>
         </div>
     </div>
     <div class="summary">
@@ -201,9 +196,6 @@
         <h2>تقييم الزوار</h2>
         <div class="stars" id="book-rating">
             <!-- سيتم إضافة تقييم الزوار هنا بواسطة JavaScript -->
-        </div>
-        <div class="rating-stars" id="user-rating">
-            <!-- نجوم التقييم القابلة للتحديد ستتم إضافتها هنا بواسطة JavaScript -->
         </div>
         <p style="text-align: center;">قيم الرواية</p>
         <textarea placeholder="أضف تعليقك هنا" id="user-comment"></textarea>
@@ -292,8 +284,8 @@
                         document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
                         document.getElementById('book-info').innerHTML = `
                             <h1>${book.title}</h1>
-                            <p><strong></strong> ${book.author}</p>
-                            <p><strong></strong> ${convertRatingToStars(book.rating)}</p>
+                            <p><strong>الكاتب:</strong> ${book.author}</p>
+                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
                             <div class="details-row">
                                 <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
                                 <div><strong>النوع:</strong> ${book.genre}</div>
