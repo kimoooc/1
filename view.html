@@ -11,144 +11,67 @@
             color: #333;
             margin: 0;
             padding: 20px;
+            background-color: #f4f4f4;
         }
 
         .container {
-            display: flex;
-            flex-direction: row;
             background-color: white;
             padding: 20px;
             border-radius: 8px;
-            flex-wrap: wrap;
-            justify-content: space-between;
         }
 
-        .book-cover {
-            flex: 0 0 300px;
-            max-width: 300px;
-        }
-
-        .book-cover img {
-            width: 100%;
-            border-radius: 8px;
-        }
-
-        .book-info {
-            flex: 1;
-            padding-right: 20px;
-            max-width: 600px;
-        }
-
-        .book-info h1 {
-            margin: 0;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        .book-info table {
-            width: 100%;
+        .tg {
             border-collapse: collapse;
-            margin-top: 20px;
+            width: 100%;
         }
 
-        .book-info table td {
-            padding: 5px;
-            vertical-align: top;
+        .tg th, .tg td {
+            border: 1px solid #ddd;
+            padding: 8px;
         }
 
-        .book-info table td:first-child {
-            font-weight: bold;
-        }
-
-        .book-info table td:nth-child(2) {
-            background-color: #ff0;
-            padding: 5px;
-            border-radius: 5px;
-        }
-
-        .book-info .details-row {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .details-row div {
-            flex: 1;
-            padding: 5px;
+        .tg th {
+            background-color: #f2f2f2;
             text-align: center;
-            border-radius: 5px;
         }
 
-        .details-row div:not(:last-child) {
-            margin-left: 10px;
+        .tg img {
+            width: 100px;
+            border-radius: 8px;
         }
 
-        .summary, .review, .rating {
+        .star-rating {
+            direction: ltr;
+            font-size: 60px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .star-rating span {
+            color: #ccc;
+        }
+
+        .star-rating span:hover,
+        .star-rating span:hover ~ span {
+            color: #FFD700;
+        }
+
+        .rate-text {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .summary, .review {
             background-color: white;
             padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
         }
 
-        .summary h2, .review h2, .rating h2 {
+        .summary h2, .review h2 {
             margin-top: 0;
-        }
-
-        .stars {
-            font-size: 24px;
-            color: #FFD700;
-            text-align: center;
-        }
-
-        textarea {
-            width: 100%;
-            height: 100px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-        }
-
-        button {
-            background-color: #333;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            margin-top: 10px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #555;
-        }
-
-        @media screen and (max-width: 600px) {
-            .container {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .book-cover {
-                margin-bottom: 20px;
-                max-width: 100%;
-            }
-
-            .book-info {
-                padding-left: 0;
-                max-width: 100%;
-            }
-
-            .book-info h1 {
-                text-align: center;
-            }
-
-            .details-row {
-                flex-direction: column;
-            }
-
-            .details-row div {
-                margin: 5px 0;
-            }
         }
 
         .loading-spinner {
@@ -157,9 +80,25 @@
             align-items: center;
             height: 100vh;
         }
-        
+
         .loading-spinner img {
             width: 100px;
+        }
+
+        @media screen and (max-width: 600px) {
+            .tg th, .tg td {
+                display: block;
+                width: 100%;
+            }
+
+            .tg img {
+                display: block;
+                margin: 0 auto;
+            }
+
+            .tg {
+                border: none;
+            }
         }
     </style>
 </head>
@@ -168,12 +107,45 @@
         <img src="https://i.imgur.com/llF5iyg.gif" alt="جاري التحميل...">
     </div>
     <div class="container" id="book-details" style="display: none;">
-        <div class="book-cover" id="book-cover">
-            <!-- سيتم إضافة غلاف الكتاب هنا بواسطة JavaScript -->
-        </div>
-        <div class="book-info" id="book-info">
-            <!-- سيتم إضافة معلومات الكتاب هنا بواسطة JavaScript -->
-        </div>
+        <table class="tg">
+            <thead>
+                <tr>
+                    <th class="tg-0lax" rowspan="4"><img id="book-cover" src="" alt="غلاف الكتاب"/></th>
+                    <th class="tg-0lax" colspan="6"><h1 id="book-title"></h1></th>
+                </tr>
+                <tr>
+                    <th class="tg-0lax" colspan="6"><p><strong id="book-author"></strong></p></th>
+                </tr>
+                <tr>
+                    <th class="tg-0lax">عدد الصفحات:</th>
+                    <th class="tg-0lax" id="book-pages"></th>
+                    <th class="tg-0lax"></th>
+                    <th class="tg-0lax">النوع:</th>
+                    <th class="tg-0lax" id="book-genre"></th>
+                    <th class="tg-0lax"></th>
+                    <th class="tg-0lax">تاريخ الإصدار</th>
+                    <th class="tg-0lax" id="book-releaseDate"></th>
+                </tr>
+                <tr>
+                    <th class="tg-0lax" colspan="6"><span class="stars" id="book-rating"></span></th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="tg-0lax">
+                        <div class="star-rating" id="star-rating">
+                            <span data-value="5">★</span>
+                            <span data-value="4">★</span>
+                            <span data-value="3">★</span>
+                            <span data-value="2">★</span>
+                            <span data-value="1">★</span>
+                        </div>
+                        <p class="rate-text">قيم الرواية</p>
+                    </td>
+                    <td class="tg-0lax" colspan="6" id="book-quotes"></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
     <div class="summary">
         <h2>الملخص:</h2>
@@ -183,14 +155,6 @@
         <h2>مراجعة الكتاب:</h2>
         <p id="book-review"></p>
     </div>
-    <div class="rating">
-        <h2>تقييم الزوار</h2>
-        <div class="stars" id="book-rating">
-            <!-- سيتم إضافة تقييم الزوار هنا بواسطة JavaScript -->
-        </div>
-        <textarea placeholder="أضف تعليقك هنا" id="user-comment"></textarea>
-        <button onclick="submitRating()">إرسال</button>
-    </div>
     <script>
         // تحويل التقييم إلى نجوم
         function convertRatingToStars(rating) {
@@ -199,16 +163,31 @@
 
             let starsHTML = '';
             for (let i = 0; i < fullStars; i++) {
-                starsHTML += '★';
-            }
-            if (halfStar) {
-                starsHTML += '☆';
+                starsHTML += `★`;
             }
             const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
             for (let i = 0; i < emptyStars; i++) {
-                starsHTML += '☆';
+                starsHTML += `☆`;
             }
             return starsHTML;
+        }
+
+        // إضافة تفاعل النجوم
+        function setupStarRating() {
+            const stars = document.querySelectorAll('.star-rating span');
+            stars.forEach(star => {
+                star.addEventListener('mouseover', (e) => {
+                    const value = e.target.getAttribute('data-value');
+                    stars.forEach(s => s.style.color = s.getAttribute('data-value') <= value ? '#FFD700' : '#ccc');
+                });
+                star.addEventListener('mouseout', () => {
+                    stars.forEach(s => s.style.color = '#ccc');
+                });
+                star.addEventListener('click', (e) => {
+                    const value = e.target.getAttribute('data-value');
+                    alert(`شكراً لتقييمك! التقييم: ${value} نجوم`);
+                });
+            });
         }
 
         // جلب معلومات الكتاب من Google Sheets
@@ -240,55 +219,25 @@
                             visitorRating: parseFloat(bookData[headers.indexOf("تقييم_الزوار")])
                         };
 
-                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
-                        document.getElementById('book-info').innerHTML = `
-                            <h1>${book.title}</h1>
-                            <table>
-                                <tr>
-                                    <td>الكاتب:</td>
-                                    <td>${book.author}</td>
-                                </tr>
-                                <tr>
-                                    <td colspan="2">
-                                        <div class="details-row">
-                                            <div>عدد الصفحات: ${book.pages}</div>
-                                            <div>النوع: ${book.genre}</div>
-                                            <div>تاريخ الإصدار: ${book.releaseDate}</div>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>التقييم:</td>
-                                    <td>${convertRatingToStars(book.rating)}</td>
-                                </tr>
-                                <tr>
-                                    <td>مقتطفات:</td>
-                                    <td>${book.quotes}</td>
-                                </tr>
-                            </table>
-                        `;
+                        document.getElementById('book-cover').src = book.cover;
+                        document.getElementById('book-cover').alt = book.title;
+                        document.getElementById('book-title').textContent = book.title;
+                        document.getElementById('book-author').textContent = book.author;
+                        document.getElementById('book-pages').textContent = book.pages;
+                        document.getElementById('book-genre').textContent = book.genre;
+                        document.getElementById('book-releaseDate').textContent = book.releaseDate;
+                        document.getElementById('book-rating').innerHTML = convertRatingToStars(book.rating);
+                        document.getElementById('book-quotes').textContent = book.quotes;
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
-                        document.getElementById('book-rating').innerHTML = convertRatingToStars(book.visitorRating);
+                        setupStarRating();
                     }
 
                     // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
                     document.getElementById('loading-spinner').style.display = 'none';
-                    document.getElementById('book-details').style.display = 'flex';
+                    document.getElementById('book-details').style.display = 'block';
                 })
                 .catch(error => console.error('Error fetching data:', error));
-        }
-
-        // إرسال التقييم
-        function submitRating() {
-            const stars = document.querySelector('.stars').innerText;
-            const comment = document.querySelector('textarea').value;
-
-            if (comment) {
-                alert(`شكراً لتقييمك!\n\nالتقييم: ${stars}\nالتعليق: ${comment}`);
-            } else {
-                alert('يرجى إضافة تعليق قبل الإرسال.');
-            }
         }
 
         // جلب تفاصيل الكتاب عند تحميل الصفحة
