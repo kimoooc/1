@@ -214,11 +214,7 @@
         <h2>مراجعة الكتاب:</h2>
         <p id="book-review"></p>
     </div>
-    <div class="rating">
-        <h2>إرسال تقييم الزوار للرواية من خلال اختيارهم لعدد من النجوم حسب تقييمهم من خلال تمرير الفارة والضغط:</h2>
-        <div id="user-rating" class="rating-stars"></div>
-        <button onclick="submitRating()">إرسال التقييم</button>
-    </div>
+   
     <script>
         // تحويل التقييم إلى نجوم
         function convertRatingToStars(rating) {
@@ -311,6 +307,11 @@
                             <div class="quotes">
                                 <h2>مقتطفات:</h2>
                                 <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
+                            </div>
+                            <div class="rating">
+                                <h2>تقييم الزوار:</h2>
+                                <div id="user-rating" class="rating-stars"></div>
+                                <button onclick="submitRating()">إرسال التقييم</button>
                             </div>
                         `;
                         document.getElementById('book-summary').textContent = book.summary;
