@@ -195,25 +195,7 @@
             <!-- سيتم إضافة معلومات الكتاب هنا بواسطة JavaScript -->
         </div>
     </div>
-    <div class="summary">
-        <h2>الملخص:</h2>
-        <p id="book-summary"></p>
-    </div>
-    <div class="review">
-        <h2>مراجعة الكتاب:</h2>
-        <p id="book-review"></p>
-    </div>
-    <div class="rating">
-        <h2>تقييم الزوار:</h2>
-        <select id="user-rating">
-            <option value="1">1 نجمة</option>
-            <option value="2">2 نجمة</option>
-            <option value="3">3 نجمة</option>
-            <option value="4">4 نجمة</option>
-            <option value="5">5 نجمة</option>
-        </select>
-        <button onclick="submitRating()">إرسال التقييم</button>
-    </div>
+    
    
     <script>
         // تحويل التقييم إلى نجوم
@@ -245,7 +227,7 @@
                 تقييم_الزوار: rating
             };
 
-            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
+            fetch('https://script.google.com/macros/s/AKfycbw1P-EXAMPLE/exec', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -271,7 +253,7 @@
             const params = new URLSearchParams(window.location.search);
             const bookTitle = params.get('title');
 
-            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
+            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=YOUR_API_KEY';
 
             fetch(url)
                 .then(response => response.json())
@@ -294,7 +276,18 @@
                             quotes: bookData[headers.indexOf("مقتطفات")],
                         };
 
-                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
+                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>
+                        <div class="rating">
+                                <h2>تقييم الزوار:</h2>
+                                <select id="user-rating">
+                                    <option value="1">1 نجمة</option>
+                                    <option value="2">2 نجمة</option>
+                                    <option value="3">3 نجمة</option>
+                                    <option value="4">4 نجمة</option>
+                                    <option value="5">5 نجمة</option>
+                                </select>
+                                <button onclick="submitRating()">إرسال التقييم</button>
+                            </div>`;
                         document.getElementById('book-info').innerHTML = `
                             <h1>${book.title}</h1>
                             <p><strong>الكاتب:</strong> ${book.author}</p>
@@ -308,7 +301,15 @@
                                 <h2>مقتطفات:</h2>
                                 <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
                             </div>
-                           
+                            <div class="summary">
+                                <h2>الملخص:</h2>
+                                <p>${book.summary}</p>
+                            </div>
+                            <div class="review">
+                                <h2>مراجعة الكتاب:</h2>
+                                <p>${book.review}</p>
+                            </div>
+                            
                         `;
                     }
 
