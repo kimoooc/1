@@ -294,70 +294,85 @@
                             quotes: bookData[headers.indexOf("مقتطفات")],
                         };
 
-                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="غلاف ${book.title}">`;
-
+                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
                         document.getElementById('book-info').innerHTML = `
                             <h1>${book.title}</h1>
-                            <table>
-                                <tr><td>اسم الكاتب:</td><td>${book.author}</td></tr>
-                                <tr><td>عدد الصفحات:</td><td>${book.pages}</td></tr>
-                                <tr><td>النوع:</td><td>${book.genre}</td></tr>
-                                <tr><td>تاريخ الاصدار:</td><td>${book.releaseDate}</td></tr>
-                                <tr><td>تاريخ المراجعة:</td><td>${book.date}</td></tr>
-                            </table>
+                            <p><strong>الكاتب:</strong> ${book.author}</p>
+                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
+                            <div class="details-row">
+                                <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
+                                <div><strong>النوع:</strong> ${book.genre}</div>
+                                <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
+                                <div><strong>تاريخ المراجعة:</strong> ${book.date}</div>
+                            </div>
                         `;
-
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
-                        document.getElementById('loading-spinner').style.display = 'none';
-                        document.getElementById('book-details').style.display = 'flex';
 
-                        const ratingStars = convertRatingToStars(book.rating);
-                        document.querySelector('.rating').innerHTML = `
-                            <h2>التقييم:</h2>
-                            <p class="stars">${ratingStars}</p>
-                            <div id="user-rating" class="rating-stars" data-rating="${book.rating}"></div>
-                            <button onclick="submitRating()">إرسال التقييم</button>
-                        `;
-                        createRatingStars();
+                        if (book.quotes) {
+                            const quotesArray = book.quotes.split("،");
+                            const quotesContainer = document.createElement('div');
+                            quotesContainer.className = 'quotes';
+                            quotesContainer.innerHTML = '<h2>مقتطفات:</h2>';
+                            quotesArray.forEach(quote => {
+                                const quoteElement = document.createElement('div');
+                                quoteElement.className = 'quote';
+                                quoteElement.textContent = quote.trim();
+                                quotesContainer.appendChild(quoteElement);
+                            });
+                            document.body.appendChild(quotesContainer);
+                        }
+
+                        document.getElementById('book-details').style.display = 'flex';
+                        document.getElementById('loading-spinner').style.display = 'none';
                     } else {
-                        document.getElementById('loading-spinner').innerHTML = 'لم يتم العثور على معلومات حول هذا الكتاب.';
+                        console.error('Book not found');
                     }
                 })
                 .catch(error => {
-                    console.error('حدثت مشكلة أثناء جلب معلومات الكتاب:', error);
-                    document.getElementById('loading-spinner').innerHTML = 'حدثت مشكلة أثناء جلب معلومات الكتاب. يرجى المحاولة مرة أخرى لاحقًا.';
+                    console.error('Error fetching book details:', error);
                 });
         }
 
-        // إرسال التقييم إلى Google Apps Script
-        function submitRating() {
-            const ratingContainer = document.querySelector('.rating-stars');
-            const rating = ratingContainer.dataset.rating;
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchBookDetails();
+            createRatingStars();
+        });
+    </script>
 
-            // بيانات التقييم المرسلة
-            const formData = new FormData();
-            formData.append('rating', rating);
+    <div class="rating">
+        <h2>قيم هذا الكتاب:</h2>
+        <div class="rating-stars" id="user-rating" data-rating="0">
+            <!-- النجوم ستضاف هنا بواسطة JavaScript -->
+        </div>
+        <button onclick="submitRating()">إرسال التقييم</button>
+    </div>
 
-            // إعداد الطلب POST
-            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                alert(`تم إرسال التقييم بنجاح (${rating} نجوم)`);
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-                alert('حدثت مشكلة أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
-            });
-        }
+    <script>
+    function submitRating() {
+        const ratingContainer = document.querySelector('.rating-stars');
+        const rating = ratingContainer.dataset.rating;
 
-        // بدء جلب معلومات الكتاب عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', fetchBookDetails);
+        // بيانات التقييم المرسلة
+        const formData = new FormData();
+        formData.append('rating', rating);
+
+        // إعداد الطلب POST
+        fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            alert(`تم إرسال التقييم بنجاح (${rating} نجوم)`);
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            alert('حدثت مشكلة أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+        });
+    }
     </script>
 </body>
 </html>
