@@ -192,101 +192,6 @@
         .loading-spinner img {
             width: 100px;
         }
-
-        .modal {
-            display: none; 
-            position: fixed; 
-            z-index: 1; 
-            left: 0;
-            top: 0;
-            width: 100%; 
-            height: 100%; 
-            overflow: auto; 
-            background-color: rgba(0, 0, 0, 0.4); 
-        }
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto; 
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%; 
-            max-width: 400px;
-            text-align: center;
-            border-radius: 10px;
-            background-color: white;
-            color: black;
-            font-size: 1.2em;
-            position: relative;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            cursor: pointer;
-        }
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
-        }
-        .checkmark {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: block;
-            stroke-width: 2;
-            stroke: #fff;
-            stroke-miterlimit: 10;
-            margin: 10% auto;
-            box-shadow: inset 0px 0px 0px #7ac142;
-            animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-        }
-        .checkmark__circle {
-            stroke-dasharray: 166;
-            stroke-dashoffset: 166;
-            stroke-width: 2;
-            stroke-miterlimit: 10;
-            stroke: #ffffff;
-            fill: none;
-            animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
-        }
-        .checkmark__check {
-            transform-origin: 50% 50%;
-            stroke-dasharray: 48;
-            stroke-dashoffset: 48;
-            animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
-        }
-        @keyframes stroke {
-            100% {
-                stroke-dashoffset: 0;
-            }
-        }
-        @keyframes scale {
-            0%, 100% {
-                transform: none;
-            }
-            50% {
-                transform: scale3d(1.1, 1.1, 1);
-            }
-        }
-        @keyframes fill {
-            100% {
-                box-shadow: inset 0px 0px 0px 30px #7ac142;
-            }
-        }
-        .loading-message p {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
-        .thank-you p {
-            font-size: 1.5em;
-            font-weight: bold;
-        }
     </style>
 </head>
 <body>
@@ -310,117 +215,144 @@
         <p id="book-review"></p>
     </div>
    
-    <div id="successModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div class="checkmark">
-                <svg viewBox="0 0 52 52" class="checkmark__circle">
-                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-                </svg>
-            </div>
-            <p>تم إرسال التقييم بنجاح!</p>
-        </div>
-    </div>
-
-    <div id="loadingModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div class="loading-spinner">
-                <img src="https://i.imgur.com/llF5iyg.gif" alt="جاري التحميل...">
-            </div>
-            <div class="loading-message">
-                <p>يرجى الانتظار، جاري تحميل البيانات...</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="rating">
-        <h2>تقييم الكتاب:</h2>
-        <div class="stars">
-            <div class="rating-stars">
-                <span onclick="rateBook(1)">&#9733;</span>
-                <span onclick="rateBook(2)">&#9733;</span>
-                <span onclick="rateBook(3)">&#9733;</span>
-                <span onclick="rateBook(4)">&#9733;</span>
-                <span onclick="rateBook(5)">&#9733;</span>
-            </div>
-        </div>
-    </div>
-
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
-            var urlParams = new URLSearchParams(window.location.search);
-            var bookId = urlParams.get("bookId");
+        // تحويل التقييم إلى نجوم
+        function convertRatingToStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = (rating - fullStars) >= 0.5;
 
-            if (!bookId) {
-                alert("لم يتم توفير معرف الكتاب في عنوان URL.");
-                return;
+            let starsHTML = '';
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '★';
             }
-
-            fetch(`https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("book-cover").innerHTML = `<img src="${data.coverImage}" alt="${data.title}">`;
-                    document.getElementById("book-info").innerHTML = `
-                        <h1>${data.title}</h1>
-                        <table>
-                            <tr><td>المؤلف:</td><td>${data.author}</td></tr>
-                            <tr><td>تاريخ النشر:</td><td>${data.publicationDate}</td></tr>
-                            <tr><td>عدد الصفحات:</td><td>${data.pages}</td></tr>
-                            <tr><td>الناشر:</td><td>${data.publisher}</td></tr>
-                            <tr><td>ISBN:</td><td>${data.ISBN}</td></tr>
-                        </table>`;
-                    document.getElementById("book-summary").textContent = data.summary;
-                    document.getElementById("book-review").textContent = data.review;
-                    document.getElementById("loading-spinner").style.display = "none";
-                    document.getElementById("book-details").style.display = "flex";
-                })
-                .catch(error => {
-                    console.error("Error fetching book details:", error);
-                });
-        });
-
-        function rateBook(rating) {
-            var urlParams = new URLSearchParams(window.location.search);
-            var bookId = urlParams.get("bookId");
-
-            if (!bookId) {
-                alert("لم يتم توفير معرف الكتاب في عنوان URL.");
-                return;
+            if (halfStar) {
+                starsHTML += '☆';
             }
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '☆';
+            }
+            return starsHTML;
+        }
 
-            var ratingData = {
-                bookId: bookId,
-                rating: rating
-            };
+        // إضافة نجوم التقييم القابلة للتحديد
+        function createRatingStars() {
+            const ratingContainer = document.getElementById('user-rating');
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('span');
+                star.textContent = '☆';
+                star.dataset.value = i;
+                star.addEventListener('mouseover', onStarHover);
+                star.addEventListener('click', onStarClick);
+                ratingContainer.appendChild(star);
+            }
+        }
 
-            var loadingModal = document.getElementById("loadingModal");
-            loadingModal.style.display = "block";
-
-            fetch("https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(ratingData)
-            })
-            .then(response => response.json())
-            .then(data => {
-                loadingModal.style.display = "none";
-                var successModal = document.getElementById("successModal");
-                successModal.style.display = "block";
-            })
-            .catch(error => {
-                loadingModal.style.display = "none";
-                alert("حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى لاحقًا.");
-                console.error("Error submitting rating:", error);
+        function onStarHover(event) {
+            const stars = document.querySelectorAll('#user-rating span');
+            const rating = event.target.dataset.value;
+            stars.forEach((star, index) => {
+                star.textContent = index < rating ? '★' : '☆';
             });
         }
 
-        function closeModal() {
-            var successModal = document.getElementById("successModal");
-            successModal.style.display = "none";
+        function onStarClick(event) {
+            const stars = document.querySelectorAll('#user-rating span');
+            const rating = event.target.dataset.value;
+            stars.forEach((star, index) => {
+                star.textContent = index < rating ? '★' : '☆';
+                star.removeEventListener('mouseover', onStarHover);
+            });
+            document.querySelector('.rating-stars').dataset.rating = rating;
+        }
+
+        // جلب معلومات الكتاب من Google Sheets
+        function fetchBookDetails() {
+            const params = new URLSearchParams(window.location.search);
+            const bookTitle = params.get('title');
+
+            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const headers = data.values[0];
+                    const bookData = data.values.slice(1).find(row => row[headers.indexOf("عنوان_الكتاب")] === bookTitle);
+
+                    if (bookData) {
+                        const book = {
+                            date: bookData[headers.indexOf("تاريخ المراجعة")],
+                            title: bookData[headers.indexOf("عنوان_الكتاب")],
+                            cover: bookData[headers.indexOf("صورةالغلاف")],
+                            author: bookData[headers.indexOf("اسم_الكاتب")],
+                            pages: bookData[headers.indexOf("عدد_الصفحات")],
+                            genre: bookData[headers.indexOf("النوع")],
+                            releaseDate: bookData[headers.indexOf("تاريخ_الاصدار")],
+                            rating: parseFloat(bookData[headers.indexOf("التقييم")]),
+                            summary: bookData[headers.indexOf("الملخص")],
+                            review: bookData[headers.indexOf("مراجعتي")],
+                            quotes: bookData[headers.indexOf("مقتطفات")],
+                        };
+
+                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
+                        document.getElementById('book-info').innerHTML = `
+                            <h1>${book.title}</h1>
+                            <p><strong>الكاتب:</strong> ${book.author}</p>
+                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
+                            <div class="details-row">
+                                <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
+                                <div><strong>النوع:</strong> ${book.genre}</div>
+                                <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
+                                <div><strong>تاريخ المراجعة:</strong> ${book.date}</div>
+                            </div>
+                        `;
+                        document.getElementById('book-summary').textContent = book.summary;
+                        document.getElementById('book-review').textContent = book.review;
+
+                        if (book.quotes) {
+                            const quotesArray = book.quotes.split("،");
+                            const quotesContainer = document.createElement('div');
+                            quotesContainer.className = 'quotes';
+                            quotesContainer.innerHTML = '<h2>مقتطفات:</h2>';
+                            quotesArray.forEach(quote => {
+                                const quoteElement = document.createElement('div');
+                                quoteElement.className = 'quote';
+                                quoteElement.textContent = quote.trim();
+                                quotesContainer.appendChild(quoteElement);
+                            });
+                            document.body.appendChild(quotesContainer);
+                        }
+
+                        document.getElementById('book-details').style.display = 'flex';
+                        document.getElementById('loading-spinner').style.display = 'none';
+                    } else {
+                        console.error('Book not found');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching book details:', error);
+                });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            fetchBookDetails();
+            createRatingStars();
+        });
+    </script>
+
+    <div class="rating">
+        <h2>قيم هذا الكتاب:</h2>
+        <div class="rating-stars" id="user-rating" data-rating="0">
+            <!-- النجوم ستضاف هنا بواسطة JavaScript -->
+        </div>
+        <button onclick="submitRating()">إرسال التقييم</button>
+    </div>
+
+    <script>
+        function submitRating() {
+            const ratingContainer = document.querySelector('.rating-stars');
+            const rating = ratingContainer.dataset.rating;
+            alert(`لقد قمت بتقييم الكتاب بـ ${rating} نجوم. شكرًا لك!`);
         }
     </script>
 </body>
