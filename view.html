@@ -308,25 +308,7 @@
                                 <h2>مقتطفات:</h2>
                                 <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
                             </div>
-                            <div class="summary">
-                                <h2>الملخص:</h2>
-                                <p>${book.summary}</p>
-                            </div>
-                            <div class="review">
-                                <h2>مراجعة الكتاب:</h2>
-                                <p>${book.review}</p>
-                            </div>
-                            <div class="rating">
-                                <h2>تقييم الزوار:</h2>
-                                <select id="user-rating">
-                                    <option value="1">1 نجمة</option>
-                                    <option value="2">2 نجمة</option>
-                                    <option value="3">3 نجمة</option>
-                                    <option value="4">4 نجمة</option>
-                                    <option value="5">5 نجمة</option>
-                                </select>
-                                <button onclick="submitRating()">إرسال التقييم</button>
-                            </div>
+                           
                         `;
                     }
 
