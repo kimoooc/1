@@ -298,7 +298,7 @@
                         document.getElementById('book-info').innerHTML = `
                             <h1>${book.title}</h1>
                             <p><strong>الكاتب:</strong> ${book.author}</p>
-                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
+                            <p><strong>التقييم:</strong> <span class="stars">${convertRatingToStars(book.rating)}</span></p>
                             <div class="details-row">
                                 <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
                                 <div><strong>النوع:</strong> ${book.genre}</div>
@@ -352,7 +352,29 @@
         function submitRating() {
             const ratingContainer = document.querySelector('.rating-stars');
             const rating = ratingContainer.dataset.rating;
-            alert(`لقد قمت بتقييم الكتاب بـ ${rating} نجوم. شكرًا لك!`);
+
+            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    rating: rating,
+                    bookTitle: new URLSearchParams(window.location.search).get('title')
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert(`لقد قمت بتقييم الكتاب بـ ${rating} نجوم. شكرًا لك!`);
+                } else {
+                    alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+            });
         }
     </script>
 </body>
