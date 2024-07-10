@@ -24,7 +24,6 @@
         .book {
             border: 1px solid #ddd;
             border-radius: 4px;
-           /* box-shadow: 0 2px 5px rgba(0,0,0,0.1);*/
             transition: transform 0.2s;
             background-color: #fff;
             overflow: hidden;
@@ -115,8 +114,8 @@
             display: none;
             margin: 20px auto;
         }
-            .loading-spinner img{
-             width: 100px;
+        .loading-spinner img {
+            width: 100px;
         }
         .loading {
             display: none;
@@ -158,14 +157,14 @@
 
             let starsHTML = '';
             for (let i = 0; i < fullStars; i++) {
-                starsHTML += <img src="https://kimoooc.github.io/dd/icon/star.png" alt="نجمة ممتلئة"/>;
+                starsHTML += `<img src="https://kimoooc.github.io/dd/icon/star.png" alt="نجمة ممتلئة"/>`;
             }
             if (halfStar) {
-                starsHTML += <img src="https://kimoooc.github.io/dd/icon/halfStar.png" alt="نجمة نصف ممتلئة"/>;
+                starsHTML += `<img src="https://kimoooc.github.io/dd/icon/halfStar.png" alt="نجمة نصف ممتلئة"/>`;
             }
             const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
             for (let i = 0; i < emptyStars; i++) {
-                starsHTML += <img src="https://kimoooc.github.io/dd/icon/VidStar.png" alt="نجمة فارغة"/>;
+                starsHTML += `<img src="https://kimoooc.github.io/dd/icon/VidStar.png" alt="نجمة فارغة"/>`;
             }
             return starsHTML;
         }
@@ -219,7 +218,7 @@
                 const book = allBooks[i];
                 const bookElement = document.createElement('div');
                 bookElement.className = 'book';
-                bookElement.innerHTML = 
+                bookElement.innerHTML = `
                     <img src="${book.cover}" alt="${book.title}"/>
                     <div class="rating-container">
                         <div class="stars">${convertRatingToStars(book.rating)}</div>
@@ -227,7 +226,7 @@
                     </div>
                     <h3>${book.title}</h3>
                     <p>${book.author}</p>
-                ;
+                `;
                 bookElement.addEventListener('click', () => openBookDetails(book));
                 container.appendChild(bookElement);
             }
@@ -250,7 +249,7 @@
         // فتح تفاصيل الكتاب
         function openBookDetails(book) {
             const queryString = new URLSearchParams(book).toString();
-            window.location.href = view.html?${queryString};
+            window.location.href = `view.html?${queryString}`;
         }
 
         // بدء جلب الكتب الأولى
