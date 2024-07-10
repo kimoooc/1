@@ -122,12 +122,6 @@
             margin-top: 0;
         }
 
-        .stars {
-            font-size: 32px;
-            color: #FFD700;
-            text-align: center;
-        }
-
         .rating-stars {
             display: flex;
             justify-content: center;
@@ -263,9 +257,7 @@
                 star.textContent = index < rating ? '★' : '☆';
                 star.removeEventListener('mouseover', onStarHover);
             });
-
-            // إرسال التقييم مباشرة بعد اختيار النجوم
-            submitRating(rating);
+            document.querySelector('.rating-stars').dataset.rating = rating;
         }
 
         // جلب معلومات الكتاب من Google Sheets
@@ -273,26 +265,27 @@
             const params = new URLSearchParams(window.location.search);
             const bookTitle = params.get('title');
 
-            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
+            const url = 'hhttps://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
                     const headers = data.values[0];
-                    const bookData = data.values.find(row => row[headers.indexOf('العنوان')] === bookTitle);
+                    const bookData = data.values.slice(1).find(row => row[headers.indexOf("عنوان_الكتاب")] === bookTitle);
 
                     if (bookData) {
                         const book = {
-                            title: bookData[headers.indexOf('العنوان')],
-                            author: bookData[headers.indexOf('الكاتب')],
-                            rating: parseFloat(bookData[headers.indexOf('التقييم')]),
-                            pages: parseInt(bookData[headers.indexOf('عدد الصفحات')]),
-                            genre: bookData[headers.indexOf('النوع')],
-                            releaseDate: bookData[headers.indexOf('تاريخ الإصدار')],
-                            cover: bookData[headers.indexOf('الغلاف')],
-                            summary: bookData[headers.indexOf('الملخص')],
-                            review: bookData[headers.indexOf('المراجعة')],
-                            quotes: bookData[headers.indexOf('مقتطفات')],
+                            date: bookData[headers.indexOf("تاريخ المراجعة")],
+                            title: bookData[headers.indexOf("عنوان_الكتاب")],
+                            cover: bookData[headers.indexOf("صورةالغلاف")],
+                            author: bookData[headers.indexOf("اسم_الكاتب")],
+                            pages: bookData[headers.indexOf("عدد_الصفحات")],
+                            genre: bookData[headers.indexOf("النوع")],
+                            releaseDate: bookData[headers.indexOf("تاريخ_الاصدار")],
+                            rating: parseFloat(bookData[headers.indexOf("التقييم")]),
+                            summary: bookData[headers.indexOf("الملخص")],
+                            review: bookData[headers.indexOf("مراجعتي")],
+                            quotes: bookData[headers.indexOf("مقتطفات")],
                         };
 
                         document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
@@ -312,6 +305,7 @@
                             <div class="rating">
                                 <h2>تقييم الزوار:</h2>
                                 <div id="user-rating" class="rating-stars"></div>
+                                <button onclick="submitRating()">إرسال التقييم</button>
                             </div>
                         `;
                         document.getElementById('book-summary').textContent = book.summary;
@@ -328,38 +322,35 @@
                 .catch(error => console.error('Error fetching data:', error));
         }
 
-        // إرسال التقييم إلى جدول Google Sheets
-        function submitRating(rating) {
+        function submitRating() {
+            const rating = document.querySelector('.rating-stars').dataset.rating;
             const bookTitle = encodeURIComponent(document.getElementById('book-info').querySelector('h1').textContent.trim());
 
-            // يتم عرض رسالة "جاري الإرسال" بدلاً من رسالة النجوم
-            document.getElementById('user-rating').innerHTML = '<span>جاري الإرسال...</span>';
+            if (rating) {
+                // يتم عرض رسالة "جاري الإرسال" بدلاً من رسالة النجوم
+                document.getElementById('user-rating').innerHTML = '<span>جاري الإرسال...</span>';
 
-            const url = `https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec`;
+                const url = `https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec`;
 
-            const formData = new FormData();
-            formData.append('rating', rating);
-            formData.append('title', bookTitle);
-
-            fetch(url, {
-                method: 'POST',
-                body: formData
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert('تم إرسال التقييم بنجاح. شكراً لك!');
-                    } else {
+                fetch(url)
+                    .then(response => {
+                        if (response.ok) {
+                            alert('تم إرسال التقييم بنجاح. شكراً لك!');
+                        } else {
+                            alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+                        }
+                        // استعادة واجهة النجوم بعد الانتهاء من الإرسال
+                        createRatingStars();
+                    })
+                    .catch(error => {
+                        console.error('Error submitting rating:', error);
                         alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
-                    }
-                    // استعادة واجهة النجوم بعد الانتهاء من الإرسال
-                    createRatingStars();
-                })
-                .catch(error => {
-                    console.error('Error submitting rating:', error);
-                    alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
-                    // استعادة واجهة النجوم بعد الانتهاء من الإرسال
-                    createRatingStars();
-                });
+                        // استعادة واجهة النجوم بعد الانتهاء من الإرسال
+                        createRatingStars();
+                    });
+            } else {
+                alert('يرجى تحديد التقييم قبل الإرسال.');
+            }
         }
 
         // جلب تفاصيل الكتاب وإنشاء نجوم التقييم عند تحميل الصفحة
