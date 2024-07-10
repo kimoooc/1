@@ -42,64 +42,30 @@
             font-size: 24px;
         }
 
-        .book-info table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        .book-info table td {
-            padding: 5px;
-            vertical-align: top;
-        }
-
-        .book-info table td:first-child {
-            font-weight: bold;
-        }
-
-        .book-info table td:nth-child(2) {
-            background-color: #ff0;
-            padding: 5px;
-            border-radius: 5px;
-        }
-
-        .details-row {
+        .book-info .details-row {
             display: flex;
             justify-content: space-between;
             text-align: right;
             flex-wrap: wrap;
-            margin: 0;
-            width: 80%;
+            margin-top: 20px;
         }
 
-        .details-row div {
+        .book-info .details-row div {
             flex: 1;
-            padding: 0;
-            margin: 0;
+            padding: 5px;
             border-radius: 5px;
             box-sizing: border-box;
             white-space: nowrap;
         }
 
-        .summary, .review {
+        .summary, .review, .quotes, .rating {
             background-color: white;
             padding: 20px;
             border-radius: 8px;
             margin-top: 20px;
         }
 
-        .summary h2, .review h2 {
-            margin-top: 0;
-        }
-
-        .quotes {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .quotes h2 {
+        .summary h2, .review h2, .quotes h2, .rating h2 {
             margin-top: 0;
         }
 
@@ -109,17 +75,6 @@
             padding: 10px;
             margin: 10px 0;
             border-radius: 5px;
-        }
-
-        .rating {
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .rating h2 {
-            margin-top: 0;
         }
 
         .rating-stars {
@@ -173,11 +128,11 @@
                 text-align: center;
             }
 
-            .details-row {
+            .book-info .details-row {
                 flex-direction: column;
             }
 
-            .details-row div {
+            .book-info .details-row div {
                 margin: 5px 0;
             }
         }
@@ -248,8 +203,8 @@
         function submitRating(rating) {
             const title = document.getElementById('book-info').querySelector('h1').textContent.trim();
             const data = {
-                عنوان_الكتاب: title,
-                تقييم_الزوار: currentRating
+                "عنوان_الكتاب": title,
+                "تقييم_الزوار": currentRating
             };
 
             // عرض "جاري الإرسال"
@@ -353,6 +308,10 @@
                     document.getElementById('book-details').style.display = 'flex';
                 })
                 .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function convertRatingToStars(rating) {
+            return '★'.repeat(rating) + '☆'.repeat(5 - rating);
         }
     </script>
 </body>
