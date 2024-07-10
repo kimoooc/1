@@ -276,18 +276,7 @@
                             quotes: bookData[headers.indexOf("مقتطفات")],
                         };
 
-                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>
-                        <div class="rating">
-                                <h2>تقييم الزوار:</h2>
-                                <select id="user-rating">
-                                    <option value="1">1 نجمة</option>
-                                    <option value="2">2 نجمة</option>
-                                    <option value="3">3 نجمة</option>
-                                    <option value="4">4 نجمة</option>
-                                    <option value="5">5 نجمة</option>
-                                </select>
-                                <button onclick="submitRating()">إرسال التقييم</button>
-                            </div>`;
+                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
                         document.getElementById('book-info').innerHTML = `
                             <h1>${book.title}</h1>
                             <p><strong>الكاتب:</strong> ${book.author}</p>
@@ -309,6 +298,20 @@
                                 <h2>مراجعة الكتاب:</h2>
                                 <p>${book.review}</p>
                             </div>
+
+                             <div class="rating">
+                                <h2>تقييم الزوار:</h2>
+                                <select id="user-rating">
+                                    <option value="1">1 نجمة</option>
+                                    <option value="2">2 نجمة</option>
+                                    <option value="3">3 نجمة</option>
+                                    <option value="4">4 نجمة</option>
+                                    <option value="5">5 نجمة</option>
+                                </select>
+                                <button onclick="submitRating()">إرسال التقييم</button>
+                            </div>
+
+
                             
                         `;
                     }
