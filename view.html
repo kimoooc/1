@@ -188,41 +188,37 @@
             align-items: center;
             height: 100vh;
         }
-
+        
         .loading-spinner img {
             width: 100px;
         }
-
-        .star-rating, .thank-you, .loading-message {
+        
+        
+        
+              .star-rating, .thank-you, .loading-message {
             display: none;
         }
-
         .visible {
             display: block;
         }
-
         .star-rating {
             direction: rtl;
             display: inline-block;
         }
-
         .star-rating input {
             display: none;
         }
-
         .star-rating label {
             color: #ccc;
             font-size: 2em;
             padding: 0;
             cursor: pointer;
         }
-
         .star-rating label:hover,
         .star-rating label:hover ~ label,
         .star-rating input:checked ~ label {
             color: orange;
         }
-
         .modal {
             display: none; 
             position: fixed; 
@@ -234,7 +230,6 @@
             overflow: auto; 
             background-color: rgba(0, 0, 0, 0.4); 
         }
-
         .modal-content {
             background-color: #fefefe;
             margin: 15% auto; 
@@ -249,7 +244,6 @@
             font-size: 1.2em;
             position: relative;
         }
-
         .close {
             color: #aaa;
             float: right;
@@ -260,14 +254,12 @@
             right: 20px;
             cursor: pointer;
         }
-
         .close:hover,
         .close:focus {
             color: #000;
             text-decoration: none;
             cursor: pointer;
         }
-
         .checkmark {
             width: 50px;
             height: 50px;
@@ -280,7 +272,6 @@
             box-shadow: inset 0px 0px 0px #7ac142;
             animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
         }
-
         .checkmark__circle {
             stroke-dasharray: 166;
             stroke-dashoffset: 166;
@@ -290,20 +281,17 @@
             fill: none;
             animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
         }
-
         .checkmark__check {
             transform-origin: 50% 50%;
             stroke-dasharray: 48;
             stroke-dashoffset: 48;
             animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
         }
-
         @keyframes stroke {
             100% {
                 stroke-dashoffset: 0;
             }
         }
-
         @keyframes scale {
             0%, 100% {
                 transform: none;
@@ -312,147 +300,272 @@
                 transform: scale3d(1.1, 1.1, 1);
             }
         }
-
         @keyframes fill {
             100% {
                 box-shadow: inset 0px 0px 0px 30px #7ac142;
             }
         }
-
         .loader {
             border: 8px solid #f3f3f3;
             border-top: 8px solid #3498db;
             border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: auto;
+            width: 60px;
+            height: 60px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
         }
-
         @keyframes spin {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
+        #loadingModal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(0, 0, 0, 0.4); 
+            text-align: center;
+        }
+        #loadingModal .loader {
+            margin-top: 20%;
+        }
+        
+        
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="book-info">
-        <h1 id="book-title"></h1>
-        <table id="book-details">
-            <tr>
-                <td>المؤلف</td>
-                <td id="author"></td>
-            </tr>
-            <tr>
-                <td>السعر</td>
-                <td id="price"></td>
-            </tr>
-            <tr>
-                <td>تصنيفات</td>
-                <td id="categories"></td>
-            </tr>
-        </table>
+    <div class="loading-spinner" id="loading-spinner">
+        <img src="https://i.imgur.com/llF5iyg.gif" alt="جاري التحميل...">
     </div>
-</div>
-
-<div class="rating">
-    <h2>قيم هذا الكتاب</h2>
-    <div class="star-rating">
-        <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="ممتاز"></label>
-        <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="جيد جدًا"></label>
-        <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="متوسط"></label>
-        <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="سيء"></label>
-        <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="سيء جدًا"></label>
-    </div>
-    <button onclick="submitRating()">إرسال التقييم</button>
-</div>
-
-<div id="myModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <div class="checkmark">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
-            </svg>
+    <div class="container" id="book-details" style="display: none;">
+        <div class="book-cover" id="book-cover">
+            <!-- سيتم إضافة غلاف الكتاب هنا بواسطة JavaScript -->
         </div>
-        <h2>تم إرسال التقييم بنجاح!</h2>
+        <div class="book-info" id="book-info">
+            <!-- سيتم إضافة معلومات الكتاب هنا بواسطة JavaScript -->
+        </div>
     </div>
-</div>
+    <div class="summary">
+        <h2>الملخص:</h2>
+        <p id="book-summary"></p>
+    </div>
+    <div class="review">
+        <h2>مراجعة الكتاب:</h2>
+        <p id="book-review"></p>
+    </div>
+   
+   <div class="rating">
+    <h1>تقييم الكتاب</h1>
+    <input type="text" id="book-title" placeholder="أدخل عنوان الكتاب">
+    <div class="star-rating">
+        <input type="radio" id="5-stars" name="rating" value="5"><label for="5-stars" class="star">&#9733;</label>
+        <input type="radio" id="4-stars" name="rating" value="4"><label for="4-stars" class="star">&#9733;</label>
+        <input type="radio" id="3-stars" name="rating" value="3"><label for="3-stars" class="star">&#9733;</label>
+        <input type="radio" id="2-stars" name="rating" value="2"><label for="2-stars" class="star">&#9733;</label>
+        <input type="radio" id="1-stars" name="rating" value="1"><label for="1-stars" class="star">&#9733;</label>
+    </div>
+    <div class="loading-message">
+        <div class="loader"></div>
+        <p>جاري الإرسال...</p>
+    </div>
+    <div class="thank-you">
+        <p>شكراً على المشاركة .. رأيك يهمنا</p>
+    </div>
 
-<script>
-    // Replace with your Google Apps Script URL
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec";
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="checkmark">
+                <svg viewBox="0 0 52 52" class="checkmark__circle">
+                    <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                    <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+                </svg>
+            </div>
+            <p>تم إرسال التقييم بنجاح!</p>
+        </div>
+    </div>
 
-    // Function to fetch book details from Google Sheets based on book title
-    async function fetchBookDetails(bookTitle) {
-        const url = `https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU`;
-        try {
-            const response = await fetch(url);
-            if (!response.ok) {
-                throw new Error('Failed to fetch book details');
+    <div id="loadingModal" class="modal">
+        <div class="loader"></div>
+    </div>
+   </div>
+    <script>
+        // تحويل التقييم إلى نجوم
+        function convertRatingToStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = (rating - fullStars) >= 0.5;
+
+            let starsHTML = '';
+            for (let i = 0; i < fullStars; i++) {
+                starsHTML += '★';
             }
-            const data = await response.json();
-            document.getElementById('book-title').textContent = data.title;
-            document.getElementById('author').textContent = data.author;
-            document.getElementById('price').textContent = data.price;
-            document.getElementById('categories').textContent = data.categories.join(', ');
-            document.querySelector('.container').style.display = 'flex';
-        } catch (error) {
-            console.error('Error fetching book details:', error);
-        }
-    }
-
-    // Function to submit rating to Google Apps Script
-    async function submitRating() {
-        const rating = document.querySelector('input[name="rating"]:checked');
-        if (!rating) {
-            alert('الرجاء تحديد تقييم!');
-            return;
+            if (halfStar) {
+                starsHTML += '☆';
+            }
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            for (let i = 0; i < emptyStars; i++) {
+                starsHTML += '☆';
+            }
+            return starsHTML;
         }
 
-        const bookTitle = document.getElementById('book-title').textContent;
-        const formData = new FormData();
-        formData.append('rating', rating.value);
-        formData.append('bookTitle', bookTitle);
+        // إضافة نجوم التقييم القابلة للتحديد
+        function createRatingStars() {
+            const ratingContainer = document.getElementById('user-rating');
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('span');
+                star.textContent = '☆';
+                star.dataset.value = i;
+                star.addEventListener('mouseover', onStarHover);
+                star.addEventListener('click', onStarClick);
+                ratingContainer.appendChild(star);
+            }
+        }
 
-        try {
-            const response = await fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
+        function onStarHover(event) {
+            const stars = document.querySelectorAll('#user-rating span');
+            const rating = event.target.dataset.value;
+            stars.forEach((star, index) => {
+                star.textContent = index < rating ? '★' : '☆';
             });
-            if (!response.ok) {
-                throw new Error('Failed to submit rating');
+        }
+
+        function onStarClick(event) {
+            const stars = document.querySelectorAll('#user-rating span');
+            const rating = event.target.dataset.value;
+            stars.forEach((star, index) => {
+                star.textContent = index < rating ? '★' : '☆';
+                star.removeEventListener('mouseover', onStarHover);
+            });
+            document.querySelector('.rating-stars').dataset.rating = rating;
+        }
+
+        // جلب معلومات الكتاب من Google Sheets
+        function fetchBookDetails() {
+            const params = new URLSearchParams(window.location.search);
+            const bookTitle = params.get('title');
+
+            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    const headers = data.values[0];
+                    const bookData = data.values.slice(1).find(row => row[headers.indexOf("عنوان_الكتاب")] === bookTitle);
+
+                    if (bookData) {
+                        const book = {
+                            date: bookData[headers.indexOf("تاريخ المراجعة")],
+                            title: bookData[headers.indexOf("عنوان_الكتاب")],
+                            cover: bookData[headers.indexOf("صورةالغلاف")],
+                            author: bookData[headers.indexOf("اسم_الكاتب")],
+                            pages: bookData[headers.indexOf("عدد_الصفحات")],
+                            genre: bookData[headers.indexOf("النوع")],
+                            releaseDate: bookData[headers.indexOf("تاريخ_الاصدار")],
+                            rating: parseFloat(bookData[headers.indexOf("التقييم")]),
+                            summary: bookData[headers.indexOf("الملخص")],
+                            review: bookData[headers.indexOf("مراجعتي")],
+                            quotes: bookData[headers.indexOf("مقتطفات")],
+                        };
+
+                        document.getElementById('book-cover').innerHTML = <img src="${book.cover}" alt="${book.title}"/>;
+                        document.getElementById('book-info').innerHTML = 
+                            <h1>${book.title}</h1>
+                            <p><strong>الكاتب:</strong> ${book.author}</p>
+                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
+                            <div class="details-row">
+                                <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
+                                <div><strong>النوع:</strong> ${book.genre}</div>
+                                <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
+                            </div>
+                            <div class="quotes">
+                                <h2>مقتطفات:</h2>
+                                <div id="book-quotes">${book.quotes.split('\n').map(quote => <div class="quote"><span>${quote.trim()}</span></div>).join('')}</div>
+                            </div>
+                            
+                        ;
+                        document.getElementById('book-summary').textContent = book.summary;
+                        document.getElementById('book-review').textContent = book.review;
+                    }
+
+                    // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
+                    document.getElementById('loading-spinner').style.display = 'none';
+                    document.getElementById('book-details').style.display = 'flex';
+                })
+                .catch(error => console.error('Error fetching data:', error));
+        }
+
+        function submitRating() {
+            const rating = document.querySelector('.rating-stars').dataset.rating;
+            if (rating) {
+                alert(تقييمك: ${rating} نجوم);
+                // إرسال التقييم إلى الخادم أو تخزينه في مكان مناسب
+            } else {
+                alert('يرجى تحديد التقييم قبل الإرسال.');
             }
-
-            // Show success message and hide rating section
-            document.getElementById('myModal').style.display = "block";
-            document.querySelector('.rating').style.display = 'none';
-        } catch (error) {
-            console.error('Error submitting rating:', error);
-            alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
         }
-    }
 
-    // Close the modal when the user clicks on (x)
-    document.querySelector('.close').addEventListener('click', function () {
-        document.getElementById('myModal').style.display = "none";
-    });
+        // جلب تفاصيل الكتاب وإنشاء نجوم التقييم عند تحميل الصفحة
+        window.onload = () => {
+            fetchBookDetails();
+            createRatingStars();
+        };
+        
+        
+        
+        
+        
+        
+        
+        
+          document.querySelectorAll('input[name="rating"]').forEach(input => {
+            input.addEventListener('change', submitRating);
+        });
 
-    // Close the modal when the user clicks anywhere outside of the modal
-    window.onclick = function (event) {
-        const modal = document.getElementById('myModal');
-        if (event.target === modal) {
-            modal.style.display = "none";
+        function submitRating() {
+            const title = document.getElementById('book-title').value;
+            const rating = document.querySelector('input[name="rating"]:checked').value;
+            const data = {
+                عنوان_الكتاب: title,
+                تقييم_الزوار: rating
+            };
+
+            document.querySelector('.star-rating').style.display = 'none';
+            document.getElementById('book-title').style.display = 'none';
+            document.querySelector('.loading-message').style.display = 'block';
+
+            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            }).then(response => {
+                console.log('Success:', response);
+                document.querySelector('.loading-message').style.display = 'none';
+                document.querySelector('.thank-you').style.display = 'block';
+                showModal();
+            }).catch(error => {
+                console.error('Error:', error);
+                document.querySelector('.loading-message').style.display = 'none';
+                document.querySelector('.star-rating').style.display = 'block';
+                document.getElementById('book-title').style.display = 'block';
+            });
         }
-    };
-</script>
 
+        function showModal() {
+            document.getElementById('successModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+        
+    </script>
 </body>
 </html>
