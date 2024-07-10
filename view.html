@@ -203,6 +203,17 @@
         <h2>مراجعة الكتاب:</h2>
         <p id="book-review"></p>
     </div>
+    <div class="rating">
+        <h2>تقييم الزوار:</h2>
+        <select id="user-rating">
+            <option value="1">1 نجمة</option>
+            <option value="2">2 نجمة</option>
+            <option value="3">3 نجمة</option>
+            <option value="4">4 نجمة</option>
+            <option value="5">5 نجمة</option>
+        </select>
+        <button onclick="submitRating()">إرسال التقييم</button>
+    </div>
    
     <script>
         // تحويل التقييم إلى نجوم
@@ -224,7 +235,38 @@
             return starsHTML;
         }
 
-        // جلب معلومات الكتاب من Google Sheets
+        // إرسال التقييم إلى Google Sheets
+        function submitRating() {
+            const title = document.getElementById('book-info').querySelector('h1').textContent.trim();
+            const rating = document.getElementById('user-rating').value;
+
+            const data = {
+                عنوان_الكتاب: title,
+                تقييم_الزوار: rating
+            };
+
+            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('تم إرسال التقييم بنجاح.');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('حدث خطأ أثناء إرسال التقييم.');
+            });
+        }
+
+        // جلب تفاصيل الكتاب عند تحميل الصفحة
+        window.onload = fetchBookDetails;
+
+        // تحديث تفاصيل الكتاب بعد تحميل البيانات
         function fetchBookDetails() {
             const params = new URLSearchParams(window.location.search);
             const bookTitle = params.get('title');
@@ -266,6 +308,14 @@
                                 <h2>مقتطفات:</h2>
                                 <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
                             </div>
+                            <div class="summary">
+                                <h2>الملخص:</h2>
+                                <p>${book.summary}</p>
+                            </div>
+                            <div class="review">
+                                <h2>مراجعة الكتاب:</h2>
+                                <p>${book.review}</p>
+                            </div>
                             <div class="rating">
                                 <h2>تقييم الزوار:</h2>
                                 <select id="user-rating">
@@ -278,8 +328,6 @@
                                 <button onclick="submitRating()">إرسال التقييم</button>
                             </div>
                         `;
-                        document.getElementById('book-summary').textContent = book.summary;
-                        document.getElementById('book-review').textContent = book.review;
                     }
 
                     // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
@@ -288,19 +336,6 @@
                 })
                 .catch(error => console.error('Error fetching data:', error));
         }
-
-        function submitRating() {
-            const rating = document.getElementById('user-rating').value;
-            if (rating) {
-                alert(`تم إرسال التقييم بنجاح: ${rating}`);
-                // هنا يمكنك إرسال التقييم إلى Google Sheets أو مكان آخر
-            } else {
-                alert('يرجى تحديد التقييم قبل الإرسال.');
-            }
-        }
-
-        // جلب تفاصيل الكتاب عند تحميل الصفحة
-        window.onload = fetchBookDetails;
     </script>
 </body>
 </html>
