@@ -91,7 +91,7 @@
 
         .rating-stars span:hover,
         .rating-stars span.active {
-            color: gold; /* تغيير لون النجوم */
+            color: gold;
         }
 
         button {
@@ -183,7 +183,7 @@
    
     <script>
         let currentRating = 0;
-        let hasRated = false; // تتبع ما إذا كان المستخدم قد قام بالتقييم بالفعل
+        let hasRated = false;
 
         function setRating(stars) {
             if (!hasRated) {
@@ -205,15 +205,14 @@
 
         function submitRating(rating) {
             if (!hasRated) {
-                hasRated = true; // تعيين أن المستخدم قد قام بالتقييم
+                hasRated = true;
 
                 const title = document.getElementById('book-info').querySelector('h1').textContent.trim();
                 const data = {
                     "عنوان_الكتاب": title,
-                    "تقييم_الزوار": rating // استخدام الرقم المرسل بدلاً من currentRating
+                    "تقييم_الزوار": rating
                 };
 
-                // عرض "جاري الإرسال"
                 const statusElement = document.getElementById('rating-status');
                 statusElement.textContent = 'جاري الإرسال...';
                 statusElement.style.display = 'block';
@@ -230,16 +229,17 @@
                         statusElement.textContent = 'تم إرسال التقييم بنجاح.';
                     } else {
                         statusElement.textContent = 'حدث خطأ أثناء إرسال التقييم، يرجى المحاولة مرة أخرى.';
+                        hasRated = false; // السماح بإعادة المحاولة في حالة الفشل
                     }
                 })
                 .catch(error => {
                     console.error('Error submitting rating:', error);
                     statusElement.textContent = 'حدث خطأ أثناء إرسال التقييم، يرجى المحاولة مرة أخرى.';
+                    hasRated = false; // السماح بإعادة المحاولة في حالة الفشل
                 });
             }
         }
 
-        // Replace with your book data retrieval logic
         document.addEventListener('DOMContentLoaded', function() {
             const params = new URLSearchParams(window.location.search);
             const bookTitle = params.get('title');
@@ -281,7 +281,6 @@
                         document.getElementById('book-review').textContent = book.review;
                     }
 
-                    // Hide loading spinner and show book details
                     document.getElementById('loading-spinner').style.display = 'none';
                     document.getElementById('book-details').style.display = 'flex';
                 })
