@@ -303,69 +303,66 @@
                                 <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
                                 <div><strong>النوع:</strong> ${book.genre}</div>
                                 <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
-                                <div><strong>تاريخ المراجعة:</strong> ${book.date}</div>
+                            </div>
+                            <div class="quotes">
+                                <h2>مقتطفات:</h2>
+                                <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
+                            </div>
+                            <div class="rating">
+                                <h2>تقييم الزوار:</h2>
+                                <div id="user-rating" class="rating-stars"></div>
+                                <button onclick="submitRating()">إرسال التقييم</button>
                             </div>
                         `;
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
-
-                        if (book.quotes) {
-                            const quotesArray = book.quotes.split("،");
-                            const quotesContainer = document.createElement('div');
-                            quotesContainer.className = 'quotes';
-                            quotesContainer.innerHTML = '<h2>مقتطفات:</h2>';
-                            quotesArray.forEach(quote => {
-                                const quoteElement = document.createElement('div');
-                                quoteElement.className = 'quote';
-                                quoteElement.textContent = quote.trim();
-                                quotesContainer.appendChild(quoteElement);
-                            });
-                            document.body.appendChild(quotesContainer);
-                        }
-
-                        document.getElementById('book-details').style.display = 'flex';
-                        document.getElementById('loading-spinner').style.display = 'none';
-                    } else {
-                        console.error('Book not found');
                     }
+
+                    // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
+                    document.getElementById('loading-spinner').style.display = 'none';
+                    document.getElementById('book-details').style.display = 'flex';
+
+                    // إنشاء نجوم التقييم بعد تحميل البيانات
+                    createRatingStars();
                 })
-                .catch(error => {
-                    console.error('Error fetching book details:', error);
-                });
+                .catch(error => console.error('Error fetching data:', error));
         }
 
-        document.addEventListener('DOMContentLoaded', () => {
-            fetchBookDetails();
-            createRatingStars();
-        });
-
-        // إرسال التقييم تلقائيًا بدون زر
         function submitRating() {
-            const ratingContainer = document.querySelector('.rating-stars');
-            const rating = ratingContainer.dataset.rating;
+            const rating = document.querySelector('.rating-stars').dataset.rating;
+            const bookTitle = encodeURIComponent(document.getElementById('book-info').querySelector('h1').textContent.trim());
 
-            // بيانات التقييم المرسلة
-            const formData = new FormData();
-            formData.append('title', document.getElementById('book-info').querySelector('h1').textContent);
-            formData.append('rating', rating);
+            if (rating) {
+                // يتم عرض رسالة "جاري الإرسال" بدلاً من رسالة النجوم
+                document.getElementById('user-rating').innerHTML = '<span>جاري الإرسال...</span>';
 
-            // إعداد الطلب POST
-            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                alert(`تم إرسال التقييم بنجاح (${rating} نجوم)`);
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-                alert('حدثت مشكلة أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
-            });
+                const url = `https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec`;
+
+                fetch(url)
+                    .then(response => {
+                        if (response.ok) {
+                            alert('تم إرسال التقييم بنجاح. شكراً لك!');
+                        } else {
+                            alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+                        }
+                        // استعادة واجهة النجوم بعد الانتهاء من الإرسال
+                        createRatingStars();
+                    })
+                    .catch(error => {
+                        console.error('Error submitting rating:', error);
+                        alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+                        // استعادة واجهة النجوم بعد الانتهاء من الإرسال
+                        createRatingStars();
+                    });
+            } else {
+                alert('يرجى تحديد التقييم قبل الإرسال.');
+            }
         }
-    </script>
 
+        // جلب تفاصيل الكتاب وإنشاء نجوم التقييم عند تحميل الصفحة
+        window.onload = () => {
+            fetchBookDetails();
+        };
+    </script>
 </body>
 </html>
