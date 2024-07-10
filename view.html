@@ -337,7 +337,14 @@
 
             const url = `https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec`;
 
-            fetch(url)
+            const formData = new FormData();
+            formData.append('rating', rating);
+            formData.append('title', bookTitle);
+
+            fetch(url, {
+                method: 'POST',
+                body: formData
+            })
                 .then(response => {
                     if (response.ok) {
                         alert('تم إرسال التقييم بنجاح. شكراً لك!');
