@@ -140,7 +140,17 @@
         }
 
         button {
-            display: none; /* أزلت الزر بالكامل */
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
         }
 
         @media screen and (max-width: 600px) {
@@ -254,9 +264,6 @@
                 star.removeEventListener('mouseover', onStarHover);
             });
             document.querySelector('.rating-stars').dataset.rating = rating;
-
-            // إرسال التقييم
-            submitRating();
         }
 
         // جلب معلومات الكتاب من Google Sheets
@@ -264,7 +271,7 @@
             const params = new URLSearchParams(window.location.search);
             const bookTitle = params.get('title');
 
-            const url = 'hhttps://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
+            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=YOUR_API_KEY';
 
             fetch(url)
                 .then(response => response.json())
@@ -304,6 +311,7 @@
                             <div class="rating">
                                 <h2>تقييم الزوار:</h2>
                                 <div id="user-rating" class="rating-stars"></div>
+                                <button onclick="submitRating()">إرسال التقييم</button>
                             </div>
                         `;
                         document.getElementById('book-summary').textContent = book.summary;
@@ -326,19 +334,25 @@
 
             if (rating) {
                 // يتم عرض رسالة "جاري الإرسال" بدلاً من رسالة النجوم
-                const url = `https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec`;
+                document.getElementById('user-rating').innerHTML = '<span>جاري الإرسال...</span>';
 
-                fetch(url, { method: 'POST' })
+                const url = `https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec?rating=${rating}&title=${bookTitle}`;
+
+                fetch(url)
                     .then(response => {
                         if (response.ok) {
                             alert('تم إرسال التقييم بنجاح. شكراً لك!');
                         } else {
                             alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
                         }
+                        // استعادة واجهة النجوم بعد الانتهاء من الإرسال
+                        createRatingStars();
                     })
                     .catch(error => {
                         console.error('Error submitting rating:', error);
                         alert('حدث خطأ أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+                        // استعادة واجهة النجوم بعد الانتهاء من الإرسال
+                        createRatingStars();
                     });
             } else {
                 alert('يرجى تحديد التقييم قبل الإرسال.');
