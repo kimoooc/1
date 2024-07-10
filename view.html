@@ -139,6 +139,20 @@
             cursor: pointer;
         }
 
+        button {
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
         @media screen and (max-width: 600px) {
             .container {
                 flex-direction: column;
@@ -247,11 +261,9 @@
             const rating = event.target.dataset.value;
             stars.forEach((star, index) => {
                 star.textContent = index < rating ? '★' : '☆';
+                star.removeEventListener('mouseover', onStarHover);
             });
             document.querySelector('.rating-stars').dataset.rating = rating;
-
-            // إرسال التقييم تلقائيًا بعد اختيار النجوم
-            submitRating();
         }
 
         // جلب معلومات الكتاب من Google Sheets
@@ -282,8 +294,8 @@
                             quotes: bookData[headers.indexOf("مقتطفات")],
                         };
 
-                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
-                        document.getElementById('book-info').innerHTML = `
+                        document.getElementById('book-cover').innerHTML = <img src="${book.cover}" alt="${book.title}"/>;
+                        document.getElementById('book-info').innerHTML = 
                             <h1>${book.title}</h1>
                             <p><strong>الكاتب:</strong> ${book.author}</p>
                             <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
@@ -293,7 +305,7 @@
                                 <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
                                 <div><strong>تاريخ المراجعة:</strong> ${book.date}</div>
                             </div>
-                        `;
+                        ;
                         document.getElementById('book-summary').textContent = book.summary;
                         document.getElementById('book-review').textContent = book.review;
 
@@ -326,33 +338,41 @@
             fetchBookDetails();
             createRatingStars();
         });
+    </script>
 
-        // إرسال التقييم تلقائيًا بدون زر
-        function submitRating() {
-            const ratingContainer = document.querySelector('.rating-stars');
-            const rating = ratingContainer.dataset.rating;
+    <div class="rating">
+        <h2>قيم هذا الكتاب:</h2>
+        <div class="rating-stars" id="user-rating" data-rating="0">
+            <!-- النجوم ستضاف هنا بواسطة JavaScript -->
+        </div>
+        <button onclick="submitRating()">إرسال التقييم</button>
+    </div>
 
-            // بيانات التقييم المرسلة
-            const formData = new FormData();
-            formData.append('title', document.getElementById('book-info').querySelector('h1').textContent);
-            formData.append('rating', rating);
+    <script>
+    function submitRating() {
+        const ratingContainer = document.querySelector('.rating-stars');
+        const rating = ratingContainer.dataset.rating;
 
-            // إعداد الطلب POST
-            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                alert(`تم إرسال التقييم بنجاح (${rating} نجوم)`);
-            })
-            .catch(error => {
-                console.error('There has been a problem with your fetch operation:', error);
-                alert('حدثت مشكلة أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
-            });
-        }
+        // بيانات التقييم المرسلة
+        const formData = new FormData();
+        formData.append('rating', rating);
+
+        // إعداد الطلب POST
+        fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            alert(تم إرسال التقييم بنجاح (${rating} نجوم));
+        })
+        .catch(error => {
+            console.error('There has been a problem with your fetch operation:', error);
+            alert('حدثت مشكلة أثناء إرسال التقييم. يرجى المحاولة مرة أخرى.');
+        });
+    }
     </script>
 </body>
 </html>
