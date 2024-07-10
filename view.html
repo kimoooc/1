@@ -218,24 +218,31 @@
                 statusElement.textContent = 'جاري الإرسال...';
                 statusElement.style.display = 'block';
 
-                fetch('https://script.google.com/macros/s/AKfycbyTSGF6kkZv4K0zA55s_yZTdzIP4KUqROjSMCtNPMwrDyclpSkhARhsm17tRmj11tPuiA/exec', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(data),
-                })
-                .then(response => {
-                    if (response.ok) {
-                        statusElement.textContent = 'تم إرسال التقييم بنجاح.';
-                    } else {
+                // إعادة المحاولة في حالة الفشل
+                const retry = () => {
+                    fetch('https://script.google.com/macros/s/AKfycbyTSGF6kkZv4K0zA55s_yZTdzIP4KUqROjSMCtNPMwrDyclpSkhARhsm17tRmj11tPuiA/exec', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data),
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            statusElement.textContent = 'تم إرسال التقييم بنجاح.';
+                        } else {
+                            statusElement.textContent = 'حدث خطأ أثناء إرسال التقييم، يرجى المحاولة مرة أخرى.';
+                            setTimeout(retry, 1000); // إعادة المحاولة كل ثانية واحدة
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error submitting rating:', error);
                         statusElement.textContent = 'حدث خطأ أثناء إرسال التقييم، يرجى المحاولة مرة أخرى.';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error submitting rating:', error);
-                    statusElement.textContent = 'حدث خطأ أثناء إرسال التقييم، يرجى المحاولة مرة أخرى.';
-                });
+                        setTimeout(retry, 1000); // إعادة المحاولة كل ثانية واحدة
+                    });
+                };
+
+                retry(); // بدء إعادة المحاولة الأولى
             }
         }
 
