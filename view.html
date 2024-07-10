@@ -91,7 +91,7 @@
 
         .rating-stars span:hover,
         .rating-stars span.active {
-            color: yellow;
+            color: gold; /* تغيير لون النجوم */
         }
 
         button {
@@ -172,21 +172,24 @@
     <div class="rating">
         <h2>تقييم الزوار:</h2>
         <div class="rating-stars" id="rating-stars">
-            <span onmouseover="setRating(1)" onclick="submitRating(1)">☆</span>
-            <span onmouseover="setRating(2)" onclick="submitRating(2)">☆</span>
-            <span onmouseover="setRating(3)" onclick="submitRating(3)">☆</span>
-            <span onmouseover="setRating(4)" onclick="submitRating(4)">☆</span>
-            <span onmouseover="setRating(5)" onclick="submitRating(5)">☆</span>
+            <span onmouseover="setRating(1)" onclick="submitRating(1)">★</span>
+            <span onmouseover="setRating(2)" onclick="submitRating(2)">★</span>
+            <span onmouseover="setRating(3)" onclick="submitRating(3)">★</span>
+            <span onmouseover="setRating(4)" onclick="submitRating(4)">★</span>
+            <span onmouseover="setRating(5)" onclick="submitRating(5)">★</span>
         </div>
         <div id="rating-status" style="display: none; margin-top: 10px;"></div>
     </div>
    
     <script>
         let currentRating = 0;
+        let hasRated = false; // تتبع ما إذا كان المستخدم قد قام بالتقييم بالفعل
 
         function setRating(stars) {
-            currentRating = stars;
-            highlightStars(stars);
+            if (!hasRated) {
+                currentRating = stars;
+                highlightStars(stars);
+            }
         }
 
         function highlightStars(stars) {
@@ -201,117 +204,79 @@
         }
 
         function submitRating(rating) {
-            const title = document.getElementById('book-info').querySelector('h1').textContent.trim();
-            const data = {
-                "عنوان_الكتاب": title,
-                "تقييم_الزوار": currentRating
+            if (!hasRated) {
+                hasRated = true; // تعيين أن المستخدم قد قام بالتقييم
+
+                const title = document.getElementById('book-info').querySelector('h1').textContent.trim();
+                const data = {
+                    "عنوان_الكتاب": title,
+                    "تقييم_الزوار": currentRating
+                };
+
+                // عرض "جاري الإرسال"
+                const statusElement = document.getElementById('rating-status');
+                statusElement.textContent = 'جاري الإرسال...';
+                statusElement.style.display = 'block';
+
+                fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => {
+                    if (response.ok) {
+                        statusElement.textContent = 'تم إرسال التقييم بنجاح.';
+                    } else {
+                        statusElement.textContent = 'حدث خطأ أثناء إرسال التقييم، يرجى المحاولة مرة أخرى.';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error submitting rating:', error);
+                    statusElement.textContent = 'حدث خطأ أثناء إرسال التقييم، يرجى المحاولة مرة أخرى.';
+                });
+            }
+        }
+
+        // Replace with your book data retrieval logic
+        document.addEventListener('DOMContentLoaded', function() {
+            // Replace with your book data retrieval logic
+            const bookData = {
+                cover: 'https://example.com/book-cover.jpg',
+                title: 'اسم الكتاب',
+                author: 'اسم الكاتب',
+                pages: 'عدد الصفحات',
+                genre: 'النوع',
+                releaseDate: 'تاريخ الإصدار',
+                rating: 4.5,
+                summary: 'نص الملخص هنا',
+                review: 'نص المراجعة هنا',
+                quotes: 'مقتطفات الكتاب هنا',
             };
 
-            // عرض "جاري الإرسال"
-            const statusElement = document.getElementById('rating-status');
-            statusElement.textContent = 'جاري الإرسال...';
-            statusElement.style.display = 'block';
+            // Update DOM with book data
+            document.getElementById('book-cover').innerHTML = `<img src="${bookData.cover}" alt="${bookData.title}"/>`;
+            document.getElementById('book-info').innerHTML = `
+                <h1>${bookData.title}</h1>
+                <p><strong>الكاتب:</strong> ${bookData.author}</p>
+                <p><strong>التقييم:</strong> ${convertRatingToStars(bookData.rating)}</p>
+                <div class="details-row">
+                    <div><strong>عدد الصفحات:</strong> ${bookData.pages}</div>
+                    <div><strong>النوع:</strong> ${bookData.genre}</div>
+                    <div><strong>تاريخ الإصدار:</strong> ${bookData.releaseDate}</div>
+                </div>
+            `;
+            document.getElementById('book-summary').textContent = bookData.summary;
+            document.getElementById('book-review').textContent = bookData.review;
 
-            fetch('https://script.google.com/macros/s/AKfycbxRpo1siczeJVe3g65KXYq1g0xq5O1jUIF7Vr8KrJ7sGZZGw7pr_y9DJC9-_tKvLd96VQ/exec', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                // عرض "تم الإرسال"
-                statusElement.textContent = 'تم الإرسال';
-                // إخفاء عرض "جاري الإرسال" بعد ثوانٍ قليلة
-                setTimeout(() => {
-                    statusElement.style.display = 'none';
-                }, 2000);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                // عرض "خطأ في الإرسال"
-                statusElement.textContent = 'خطأ في الإرسال';
-            });
-        }
-
-        // جلب تفاصيل الكتاب عند تحميل الصفحة
-        window.onload = fetchBookDetails;
-
-        // تحديث تفاصيل الكتاب بعد تحميل البيانات
-        function fetchBookDetails() {
-            const params = new URLSearchParams(window.location.search);
-            const bookTitle = params.get('title');
-
-            const url = 'https://sheets.googleapis.com/v4/spreadsheets/1lVbvdEOsFkL9-agAS_EuS2mZn8Wd343Gw8uc8Pe4Bto/values/Data!A1:L1000?key=AIzaSyBhiqVypmyLHYPmqZYtvdSvxEopcLZBdYU';
-
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    const headers = data.values[0];
-                    const bookData = data.values.slice(1).find(row => row[headers.indexOf("عنوان_الكتاب")] === bookTitle);
-
-                    if (bookData) {
-                        const book = {
-                            date: bookData[headers.indexOf("تاريخ المراجعة")],
-                            title: bookData[headers.indexOf("عنوان_الكتاب")],
-                            cover: bookData[headers.indexOf("صورةالغلاف")],
-                            author: bookData[headers.indexOf("اسم_الكاتب")],
-                            pages: bookData[headers.indexOf("عدد_الصفحات")],
-                            genre: bookData[headers.indexOf("النوع")],
-                            releaseDate: bookData[headers.indexOf("تاريخ_الاصدار")],
-                            rating: parseFloat(bookData[headers.indexOf("التقييم")]),
-                            summary: bookData[headers.indexOf("الملخص")],
-                            review: bookData[headers.indexOf("مراجعتي")],
-                            quotes: bookData[headers.indexOf("مقتطفات")],
-                        };
-
-                        document.getElementById('book-cover').innerHTML = `<img src="${book.cover}" alt="${book.title}"/>`;
-                        document.getElementById('book-info').innerHTML = `
-                            <h1>${book.title}</h1>
-                            <p><strong>الكاتب:</strong> ${book.author}</p>
-                            <p><strong>التقييم:</strong> ${convertRatingToStars(book.rating)}</p>
-                            <div class="details-row">
-                                <div><strong>عدد الصفحات:</strong> ${book.pages}</div>
-                                <div><strong>النوع:</strong> ${book.genre}</div>
-                                <div><strong>تاريخ الإصدار:</strong> ${book.releaseDate}</div>
-                            </div>
-                            <div class="quotes">
-                                <h2>مقتطفات:</h2>
-                                <div id="book-quotes">${book.quotes.split('\n').map(quote => `<div class="quote"><span>${quote.trim()}</span></div>`).join('')}</div>
-                            </div>
-                            <div class="summary">
-                                <h2>الملخص:</h2>
-                                <p>${book.summary}</p>
-                            </div>
-                            <div class="review">
-                                <h2>مراجعة الكتاب:</h2>
-                                <p>${book.review}</p>
-                            </div>
-                            <div class="rating">
-                                <h2>تقييم الزوار:</h2>
-                                <div class="rating-stars" id="rating-stars">
-                                    <span onmouseover="setRating(1)" onclick="submitRating(1)">☆</span>
-                                    <span onmouseover="setRating(2)" onclick="submitRating(2)">☆</span>
-                                    <span onmouseover="setRating(3)" onclick="submitRating(3)">☆</span>
-                                    <span onmouseover="setRating(4)" onclick="submitRating(4)">☆</span>
-                                    <span onmouseover="setRating(5)" onclick="submitRating(5)">☆</span>
-                                </div>
-                                <div id="rating-status" style="display: none; margin-top: 10px;"></div>
-                            </div>
-                        `;
-                    }
-
-                    // إخفاء صورة الانتظار وإظهار تفاصيل الكتاب
-                    document.getElementById('loading-spinner').style.display = 'none';
-                    document.getElementById('book-details').style.display = 'flex';
-                })
-                .catch(error => console.error('Error fetching data:', error));
-        }
+            // Hide loading spinner and show book details
+            document.getElementById('loading-spinner').style.display = 'none';
+            document.getElementById('book-details').style.display = 'flex';
+        });
 
         function convertRatingToStars(rating) {
-            return '★'.repeat(rating) + '☆'.repeat(5 - rating);
+            return '★'.repeat(Math.floor(rating)) + '☆'.repeat(5 - Math.floor(rating));
         }
     </script>
 </body>
